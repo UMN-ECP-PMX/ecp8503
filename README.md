@@ -23,4 +23,4 @@
 | 13 (04/17/2026)  | Mixture modeling                                     | Richard Brundage, PharmD, PhD    |
 | 14 (04/24/2026)  | Estimation methods                                   | Samuel Callisto, PhD             |
 | 15 (05/01/2026)  | Optimal study design                                 | Mutaz Jaber, PharmD, PhD         |
-| 16 (05/08/2026)  | **Final Exam**                                       |                                  |
+| 16 (05/08/2026)  | **FINAL EXAM**                                       |                                  |

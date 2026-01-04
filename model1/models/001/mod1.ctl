@@ -1,53 +1,46 @@
-$PROBLEM 
+$PROBLEM Model prepared for Finch-Studio test
 
 $INPUT C NUM ID TIME AMT CMT EVID DV BLQ LLOQ 
-      AGE SEX ALB SCR WT HT GENO BSA EGFR DOSE
+       AGE SEX ALB SCR WT HT GENO BSA EGFR DOSE
 
 $DATA ../../data/nmdat1.csv IGNORE=(C='C', BLQ=1)
 
-$SUBROUTINE ADVAN4 TRANS4
+$SUBROUTINE ADVAN2 TRANS2
 
 $PK
  
-;log transformed PK parms
- 
-V2WT   = LOG(WT/70)
-CLWT   = LOG(WT/70)*0.75
-CLEGFR = LOG(EGFR/90)*THETA(6)
-CLGENO = LOG(THETA(7))*GENO
-V3WT   = LOG(WT/70)
-QWT    = LOG(WT/70)*0.75
+;log transformed PK params
+TVKA = THETA(1)
+KA   = TVKA*EXP(ETA(1))
 
-KA   = EXP(THETA(1)+ETA(1))
-V2   = EXP(THETA(2)+V2WT+ETA(2))
-CL   = EXP(THETA(3)+CLWT+CLEGFR+CLGENO+ETA(3))
-V3   = EXP(THETA(4)+V3WT)
-Q    = EXP(THETA(5)+QWT) 
+TVV  = THETA(2)
+V    = TVV*EXP(ETA(2))
 
-S2 = V2/1000 ; dose in mcg, conc in mcg/mL
+TVCL = THETA(3)
+CL   = TVCL*EXP(ETA(3))
+
+S2 = V/1000 ; dose in mcg, conc in mcg/mL
 
 $ERROR
 IPRED = F 
 Y=IPRED*(1+EPS(1))
 
-$THETA  ; log values
-(0.5)   ;  1 KA (1/hr) - 1.5
-(3.5)   ;  2 V2 (L) - 60
-(1)     ;  3 CL (L/hr) - 3.5
-(4)     ;  4 V3 (L) - 70
-(2)     ;  5 Q  (L/hr) - 4
-(1)     ;  6 EGFR~CL ()
-(1)     ;  7 GENO~CL ()
+$THETA
+(0, 1.5)   ;  1 KA (1/hr)
+(0, 60)    ;  2 V  (L)
+(0, 3.5)   ;  3 CL (L/hr)
 
-$OMEGA BLOCK(3)
-0.2   ;ETA(KA)
-0.01 0.2   ;ETA(V2)
-0.01 0.01 0.2   ;ETA(CL)
+$OMEGA
+0.2   ; ETA(KA)
+0.2   ; ETA(V)
+0.2   ; ETA(CL)
 
 $SIGMA
-0.05     ; 1 pro error
+0.1     ; 1 prop error
 
-$EST MAXEVAL=9999 METHOD=1 INTER SIGL=6 NSIG=3 PRINT=1 RANMETHOD=P MSFO=./001.msf 
+$EST MAXEVAL=9999 METHOD=1 INTER SIGL=6 NSIG=3 PRINT=1 RANMETHOD=P MSFO=./mod1.msf 
 $COV PRINT=E RANMETHOD=P
-$TABLE NUM IPRED NPDE CWRES NOPRINT ONEHEADER RANMETHOD=P FILE=001.tab
-$TABLE NUM CL V2 Q V3 KA ETAS(1:LAST) NOAPPEND NOPRINT ONEHEADER FILE=001par.tab
+$TABLE NUM ID TIME DV MDV EVID IPRED NPDE CWRES NOPRINT ONEHEADER FILE=sdtab1
+$TABLE NUM ID CL V  KA ETAS(1:LAST) NOAPPEND NOPRINT ONEHEADER FILE=patab1 ; model parameters
+$TABLE NUM ID SEX GENO NOAPPEND ONEHEADER NOPRINT FILE=catab1 ; categorical covariates
+$TABLE NUM ID AGE ALB SCR WT HT BSA EGFR DOSE NOAPPEND ONEHEADER NOPRINT FILE=cotab1 ; continuous covariates

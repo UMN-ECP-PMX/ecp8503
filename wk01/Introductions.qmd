@@ -1,0 +1,153 @@
+---
+title: "ECP8503 Course Introductions and Environment Setup"
+author: "Shen Cheng"
+date: today
+format: 
+  html: 
+    smaller: true
+    scrollable: true
+    embed-resources: true
+editor: visual
+execute:
+  enabled: false
+---
+
+# Outline
+
+-   Course introduction
+
+-   Setup course environment
+
+    -   SSH
+
+    -   Github
+
+    -   Finch Studio
+
+    -   Integrate Finch Studio with MSI
+
+# Syllabus
+
+\<<https://docs.google.com/document/d/14ttVIYZN6z524rzcIPDj6ZXysdQVEq_-/edit>\>
+
+## Objectives
+
+-   To provide instructions on hands-on population PK/PD analysis using NONMEM.
+
+-   To introduce population PK/PD concepts at intermediate to advanced levels.
+
+## Course instructors:
+
+-   Shen Cheng, PhD
+    -   Email: cheng423\@umn.edu
+-   Kyle Baron, PharmD, PhD
+    -   Email: kyleb\@metrumrg.com
+-   Samuel Callisto, PhD
+    -   Email: samc\@metrumrg.com
+-   Richard Brundage, PharmD, PhD, FCP, FISoP
+    -   Email: brund001\@umn.edu
+-   Mutaz Jaber, PharmD, PhD
+    -   Email: mutaz.jaber\@gilead.com
+
+## Important links
+
+-   Github: <https://github.com/UMN-ECP-PMX/ecp8503/tree/main>
+
+-   Minnesota Supercomputing Institute (MSI) group: ecp8503
+
+-   Communications:
+
+    -   Email: cheng423\@umn.edu
+
+    -   Office: 717 Delaware St. SE Room 464
+
+## Schedule and location
+
+-   10:10 am to 12:05 pm CT weekly on Friday
+
+-   Hybrid (Attend in person is preferred):
+
+    -   In person Location:
+
+        -   01/23/2026, 7-193/195 Weaver-Densford Hall (WDH)
+
+        -   01/30/2026-05/08/2026, 7-145 Weaver-Densford Hall (WDH)
+
+    -   Zoom option: [https://umn.zoom.us/j/95554897171?pwd=ChzR8XR5QwwavyN8donwM7Workocz2.1&jst=2](https://www.google.com/url?q=https://umn.zoom.us/j/95554897171?pwd%3DChzR8XR5QwwavyN8donwM7Workocz2.1%26jst%3D2&sa=D&source=calendar&ust=1768017966782693&usg=AOvVaw03QWbf_vey9zf9x3cG3J4K)
+
+## Grading
+
+-   30% course attendance
+
+-   30% final project (a pharmacometric analysis report)
+
+-   30% final exam
+
+-   10% course evaluation
+
+# Setup course environment
+
+## NONMEM Ecosystem
+
+![](pics/NONMEM1.png)
+
+## For this course...
+
+![](pics/NONMEM2.png)
+
+## Course environment overview
+
+![](pics/Environment.png)
+
+## SSH
+
+-   Follow the [tutorial](https://msi.umn.edu/our-resources/knowledge-base/interactive-connections-faqs/how-do-i-setup-ssh-keys) specified by MSI to setup SSH key in your local computer.
+-   Create `~/.ssh/config` locally.
+    -   `cd ~/.ssh`
+        -   `ls`
+    -   `touch ~/.ssh/config`
+    -   Open config, copy and paste the following scripts. Replace `your.msi.username` with your X500 and save it.
+
+```{bash}
+Host agate.msi.umn.edu
+HostName agate.msi.umn.edu
+User your.msi.username
+IdentityFile ~/.ssh/id_rsa
+```
+
+## Github
+
+-   Add SSH key
+-   **Clone** git repository (one time)
+    -   `git clone git@github.com:UMN-ECP-PMX/ecp8503.git`
+-   **Pull** updates
+    -   `cd /path/to/local/driectory`
+    -   `git pull`
+
+## Finch Studio
+
+-   Download Finch Studio: <https://docs.finchstudio.io/installation/#installation-files>
+
+-   Activate Finch Studio license
+
+    -   UMN License 2025-2026: `U2FsdGVkX19lqRi2W8KeIfxG4V5/y73nVXbKpQTU5OIZVoWP0KQKkAURd2z2GfQQrF+JafaaT8AM9KAmVghMxX2ogHar9A70+Y8aGY5A9lkbJcOTyLkr3plWYyZ8ipvCVQbskfKrx5AZJ+J5tYf6M4cETvyTzDxvUAhAHwvE7zo=`
+
+    ![](pics/FinchStudioLicense.png)
+
+## Finch Studio Directory Structure
+
+-   Link: <https://docs.finchstudio.io/installation/getting-started.html#directory-structure>
+
+## Integrate Finch Studio with MSI
+
+-   My blog: <https://chengshen1992.github.io/posts/FinchStudio_msi/>
+
+# Useful links
+
+-   Finch Studio website: <https://finchstudio.io/>
+
+-   Finch Studio installation instructions: <https://finchstudio.io/learn/setting-up-finch-studio%20copy>
+
+-   PsN: <https://uupharmacometrics.github.io/PsN/>
+
+-   Slurm: <https://msi.umn.edu/our-resources/knowledge-base/slurm-job-submission-and-scheduling>

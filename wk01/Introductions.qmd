@@ -28,9 +28,9 @@ execute:
 
 # Syllabus
 
-\<<https://docs.google.com/document/d/14ttVIYZN6z524rzcIPDj6ZXysdQVEq_-/edit>\>
-
 ## Objectives
+
+Assuming you have taken introductory level population PK course (e.g., ECP8502): 
 
 -   To provide instructions on hands-on population PK/PD analysis using NONMEM.
 
@@ -48,16 +48,21 @@ execute:
     -   Email: brund001\@umn.edu
 -   Mutaz Jaber, PharmD, PhD
     -   Email: mutaz.jaber\@gilead.com
+    
+## Audience
+-   Your name
+-   Your Program
+-   Your lab
 
-## Important links
+## Resources
 
--   Github: <https://github.com/UMN-ECP-PMX/ecp8503/tree/main>
+-   Github: <https://github.com/UMN-ECP-PMX/ecp8503>
 
--   Minnesota Supercomputing Institute (MSI) group: ecp8503
+-   Minnesota Supercomputing Institute (MSI) group: `ecp8503`
 
 -   Communications:
 
-    -   Email: cheng423\@umn.edu
+    -   Email (preferred): cheng423\@umn.edu
 
     -   Office: 717 Delaware St. SE Room 464
 
@@ -85,30 +90,61 @@ execute:
 
 -   10% course evaluation
 
+## Full syllabus
+
+\<<https://docs.google.com/document/d/14ttVIYZN6z524rzcIPDj6ZXysdQVEq_-/edit>\>
+
 # Setup course environment
+
+## Software for Nonlinear Mixed-Effect Modeling (NLME)
+
+-   NONMEM
+-   Pheonix NLME
+-   nlmixr
+-   Monolix
+-   ADAPT
+-   ...
 
 ## NONMEM Ecosystem
 
 ![](pics/NONMEM1.png)
 
+-   Pre-processing utilities: text editors
+-   NMTRAN: parse control steam
+-   Fortran compiler
+-   NONMEM estimation engines
+-   PredPP: give predictions post-estimation
+    -   Important for PK modeling (e.g., event handling)
+-   Post-processing utilities: programs to handle outputs (e.g., R)
+-   User interfaces
+
 ## For this course...
 
 ![](pics/NONMEM2.png)
 
-## Course environment overview
+## Course environment overview I
 
 ![](pics/Environment.png)
 
 ## SSH
 
 -   Follow the [tutorial](https://msi.umn.edu/our-resources/knowledge-base/interactive-connections-faqs/how-do-i-setup-ssh-keys) specified by MSI to setup SSH key in your local computer.
+    -   SSH agent activation step (Step 3) may be a little different on Windows
+        -   Open PowerShell on Windows:
+        -   Run commands:
+            -   `Get-Service ssh-agent`
+            -   `Start-Service ssh-agent`
+            -   `Set-Service ssh-agent -StartupType Automatic`
+            -   `ssh-add $env:USERPROFILE\.ssh\id_rsa`
+            -   `ssh-add -l`
 -   Create `~/.ssh/config` locally.
     -   `cd ~/.ssh`
         -   `ls`
     -   `touch ~/.ssh/config`
+        -   On windows `touch` won't work, `notepad ~/.ssh/config` should be used instead. 
     -   Open config, copy and paste the following scripts. Replace `your.msi.username` with your X500 and save it.
 
-```{bash}
+```{.bash}
 Host agate.msi.umn.edu
 HostName agate.msi.umn.edu
 User your.msi.username
@@ -118,11 +154,19 @@ IdentityFile ~/.ssh/id_rsa
 ## Github
 
 -   Add SSH key
+    -   Go to your github account -> Settings -> SSH and GPC keys
+    -   Click `New SSH Key`
+    -   Copy and paste in text within file `id_rsa.pub`
+    -   Save with a name
 -   **Clone** git repository (one time)
     -   `git clone git@github.com:UMN-ECP-PMX/ecp8503.git`
 -   **Pull** updates
     -   `cd /path/to/local/driectory`
     -   `git pull`
+    
+## Course environment overview II
+
+![](pics/Environment.png)
 
 ## Finch Studio
 
@@ -130,19 +174,92 @@ IdentityFile ~/.ssh/id_rsa
 
 -   Activate Finch Studio license
 
-    -   UMN License 2025-2026: `U2FsdGVkX19lqRi2W8KeIfxG4V5/y73nVXbKpQTU5OIZVoWP0KQKkAURd2z2GfQQrF+JafaaT8AM9KAmVghMxX2ogHar9A70+Y8aGY5A9lkbJcOTyLkr3plWYyZ8ipvCVQbskfKrx5AZJ+J5tYf6M4cETvyTzDxvUAhAHwvE7zo=`
+    -   UMN License 2025-2026: Shared through email
+
+    <!-- `U2FsdGVkX19lqRi2W8KeIfxG4V5/y73nVXbKpQTU5OIZVoWP0KQKkAURd2z2GfQQrF+JafaaT8AM9KAmVghMxX2ogHar9A70+Y8aGY5A9lkbJcOTyLkr3plWYyZ8ipvCVQbskfKrx5AZJ+J5tYf6M4cETvyTzDxvUAhAHwvE7zo=` -->
 
     ![](pics/FinchStudioLicense.png)
-
-## Finch Studio Directory Structure
-
--   Link: <https://docs.finchstudio.io/installation/getting-started.html#directory-structure>
-
+    
 ## Integrate Finch Studio with MSI
 
--   My blog: <https://chengshen1992.github.io/posts/FinchStudio_msi/>
+-   Connect to MSI through [Open Ondemand](http://ood.msi.umn.edu/).
+-   Create a folder named `ecp8503/model1` in home directory: used to link local Finch Studio.
+-   Open Finch Studio: navigate to `CONSOLE` -> `Remote` -> `Open SSH/SFTP Remote Connection`.
+    -   First time set up, click `Add new connection`.
+    -   Non-first time, directly click connect unless a new connection is needed. 
+
+## Integrate Finch Studio with MSI: Add new connections
+
+![](pics/fs3.png)
+
+-   Connection Name: any name that you prefer
+    -   `msi agate`
+-   Local Mount Point: a local directory for your project 
+    -   `/Users/shencheng/Desktop/ecp8503`
+-   Remote Mount Point: a remote directory for your project
+    -   `/users/1/cheng423/ecp8503`
+-   User: MSI user name (Your X500!)
+    -   `cheng423` (This is mine!)
+-   Host: MSI host
+    -   `agate.msi.umn.edu`
+-   Port: 22 as the default SSH port. [Story](https://www.ssh.com/academy/ssh/port) behind it if you are interested…
+-   Private key: Copy and paste the private key in `~/.ssh/id_rsa` (NOT `~/.ssh/id_rsa.pub`). 
+-   Passphrase is recommended. If you have configured a SSH passphrase, enabling the passphrase option as shown below and enter your passphrase at the bottom.
+
+## Integrate Finch Studio with MSI: Save and Connect
+
+-   Two-factor authentication
+-   I generally select option #1, authentication through Duo Push... (Push two times, unsure why)
+
+## Course environment overview III
+
+![](pics/Environment.png)
+
+## SLURM
+
+-   Slurm MSI help guide: <https://msi.umn.edu/our-resources/knowledge-base/slurm-job-submission-and-scheduling>
+-   Job submission and scheduling
+-   Need to have a bash script set up in advance to interact with slurm
+
+## An example SLURM bash script
+
+This has been provided in the github repository.
+
+```{.bash}
+#!/bin/bash -l
+#SBATCH --time=12:00:00
+#SBATCH --mem=10g
+#SBATCH --tmp=10g
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH -L nonmem@slurmdb:1
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=cheng423@umn.edu
+#SBATCH -p msilarge
+#SBATCH --output=NONMEM.log        # Log file name
+
+ulimit -l unlimited
+
+module load nonmem/750-rocky8
+
+execute mod1.ctl -nm_output=xml,ext,phi
+```
+
+-   `#SBATCH --mail-user=cheng423@umn.edu`: **PLEASE CHANGE TO YOUR EMAIL!**
+-   `#SBATCH -L nonmem@slurmdb:1` specifies a `NONMEM` license. Currently, two `NONMEM` licenses are available at MSI, you can specify either `#SBATCH -L nonmem@slurmdb:1` or `#SBATCH -L nonmem@slurmdb:2`.
+-   `#SBATCH -p msilarge` specifies partition of the job. Please refer to this. [sheet](https://www.msi.umn.edu/partitions) to appropriately select the partition that fits your job.
+-   `#SBATCH --output=NONMEM.log` requests a NONMEM output log for trouble shooting purpose. 
+-   `module load nonmem/750-rocky8` loads the `NONMEM` program module at MSI HPC `agate`.
+-   `execute mod1.ctl -nm_output=xml,ext` execute a model fitting through PsN, request `xml` and `ext` output. 
+
+## Running NONMEM through Finch Studio on MSI
+
+-   Copy `./model1/data` folder from local to remote. 
+-   Section 4 of my blog: [Use Finch Studio on MSI](https://chengshen1992.github.io/posts/FinchStudio_msi/)
 
 # Useful links
+
+-   My blog: <https://chengshen1992.github.io/posts/FinchStudio_msi/>
 
 -   Finch Studio website: <https://finchstudio.io/>
 
@@ -151,3 +268,6 @@ IdentityFile ~/.ssh/id_rsa
 -   PsN: <https://uupharmacometrics.github.io/PsN/>
 
 -   Slurm: <https://msi.umn.edu/our-resources/knowledge-base/slurm-job-submission-and-scheduling>
+
+-   Finch Studio Directory Structure: <https://docs.finchstudio.io/installation/getting-started.html#directory-structure>
+

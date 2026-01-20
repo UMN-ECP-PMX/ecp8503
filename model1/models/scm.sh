@@ -8,7 +8,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=cheng423@umn.edu
 #SBATCH -p msilarge
-#SBATCH --output=NONMEM.log        # Log file name
+#SBATCH --output=NONMEM-SCM.log        # Log file name
 
 ulimit -l unlimited
 

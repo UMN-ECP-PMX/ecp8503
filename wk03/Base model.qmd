@@ -380,7 +380,6 @@ $TABLE TIME
     -   Useful for missing data, BQL, ignoring outliers
     -   Useful for analyzing a subset of dataset
 -   `$DATA moxidata.csv IGNORE=C`
-
 :::
 
 ::: {.column width="30%"}
@@ -510,7 +509,7 @@ $SIGMA
 
 -   Same to `$EST`.
 -   LOTS of options specific to the estimation procedure.
--   `$EST  METHOD=1 INTERACTION MAXEVAL=9999 SIG=3 NSIG=9 PRINT=1 MSF=001.msf`
+-   `$EST  METHOD=1 INTERACTION MAXEVAL=9999 NSIG=3 SIGL=9 PRINT=1 MSF=./001.msf`
     -   An example `$EST` using First-Order Conditional Estimation with $\eta$-$\epsilon$ Interactions (FOCE+I).
 -   And a whole lot more – don’t worry about them now.
 

@@ -1,0 +1,573 @@
+---
+title: "Base model"
+author: "Shen Cheng"
+date: today
+format: 
+  revealjs: 
+    smaller: true
+    scrollable: true
+    embed-resources: true
+editor: visual
+execute:
+  enabled: true
+# include-in-header:
+#   - text: |
+#       \usepackage{xcolor}
+---
+
+```{r library}
+#| echo: true
+#| include: false
+#| message: false
+#| warning: false
+
+library(tidyverse)
+theme_set(theme_bw())
+```
+
+## Components of a nonlinear mixed-effect model (NLME)
+
+::: columns
+::: {.column width="30%"}
+$$
+Y_{ij} = f(\theta_{i}, U_i, t_{ij}) + \epsilon_{ij} \\
+\theta_{i} = d(\color{red}{\hat{\theta}}, COV_i, \eta_i) \\
+\eta_i \sim N(0, \color{red}{\omega^2}) \\
+\epsilon_ij \sim N(0, \color{red}{\sigma^2})
+$$[^1]
+:::
+
+::: {.column width="70%" style="font-size:70%;"}
+-   Fixed-effect parameters ($\hat{\theta}$)
+    -   Structural model: $\hat{\theta}$ associated with structural components
+        -   typical values of CL: $TVCL=THETA(1)$
+    -   Covariate model: $\hat{\theta}$ associated with $COV_i$
+        -   Age effect on CL: $CL=TVCL+(AGE/30)**THETA(2)$
+-   Random effect parameters
+    -   Between subject/occasion variability (BSV/BOV, $\omega^2$)
+        -   AKA. Inter-individual/occasion variability (IIV/IOV)
+    -   Residual unexplained variability (RUV, $\sigma^2$)
+        -   AKA. Residual vairability (RV)
+:::
+:::
+
+[^1]: Where $f()$ represents structural model; $d()$ represents individual parameter model that relates an individual's parameters ($\theta_i$) to population typical values ($\hat{\theta}$) and subject characteristics ($COV_i$); $U_i$ represents designing components (e.g., dose, dosing intervals, and sampling time); $COV_i$ represents individual covariates (e.g., age in years, weight in kg, etc).
+
+## What is a base model?
+
+-   Models with **no covariates**
+-   Only have $\hat{\theta}$ associated with structural model
+    -   $TVCL = THETA(1)$
+        -   All individuals will have the same average value for CL
+-   Doesn't necessarily mean the model is simple
+    -   Complex structural model
+    -   Complex BSV/BOV structure
+
+## Structural models
+
+![](./pics/structural_model.png)
+
+## Structural models
+
+::: columns
+::: {.column width="50%"}
+-   Explicit, closed form solutions
+
+    -   Faster
+
+    -   Easier to implement for simple and familiar model
+
+    -   One-, two-, and three-compartment models with IV and extravascular dosing are NONMEM built in (ADVANs 1-4, 10-12)
+
+$$
+C_{pred, t} = \frac{Dose}{V} \times e^{-K \times t}
+$$
+:::
+
+::: {.column width="50%"}
+-   Differential equations
+
+    -   Slower
+
+    -   Easier to write differential equations for complex models (ADVANs 6, 8, 9, 13-15, \$DES)
+
+$$
+\frac{dX}{dt} = -K \times X \\
+C_{pred, t} = \frac{X_t}{V}
+$$
+:::
+:::
+
+## BSV
+
+$$
+Y_{ij} = f(\theta_{i}, U_i, t_{ij}) + \epsilon_{ij} \\
+\theta_{i} = d(\color{red}{\hat{\theta}}, COV_i, \eta_i) \\
+\eta_i \sim N(0, \color{red}{\omega^2}) \\
+\epsilon_ij \sim N(0, \color{red}{\sigma^2})
+$$
+
+-   NONMEM estimates the magnitude of the variance of a parameter in the population.
+-   Output is $\omega^2$: the variance of $\eta_i$ distribution.
+    -   Although $\eta_i$ will also be estimated, it is not considered as population parameters.
+-   In NONMEM, To specify a MODEL for BSV, we write it in terms of ETA, and say OMEGA is the standard deviation of the ETAs.
+    -   $CL = TVCL + ETA(1)$
+    -   $V = TVV*EXP(ETA(2))$
+-   One ETA value per subject (based on the ID column in the NONMEM data set).
+
+## BSV
+
+::: columns
+::: {.column width="40%"}
+-   Additive model: $CL = TVCL + ETA(1)$
+    -   In this additive model, the SD of the ETAs (OMEGA) is the SD of the parameter in the population.
+    -   $OMEGA(1)^2 = 16$: SD of CL is 4.0
+:::
+
+::: {.column width="60%"}
+-   Exponential model: $V = TVV*EXP(ETA(2))$
+-   Assuming log-normal distributions: $log(V) = log(TVV) + ETA(2)$
+    -   Right-skewed
+    -   Natural bound of 0
+    -   More biologically plausible
+    -   OMEGA is the variability, usually reported as the % coefficient of variations (CV%) in the population
+        -   For example: if $OMEGA(2)^2 = 0.09$, CV of CL is \~30% ($\sqrt{0.09}=0.30$)
+:::
+:::
+
+## CV% calculations in exponential model
+
+::: columns
+::: {.column width="50%"}
+-   $\sqrt{\omega^{2}} \times 100\%$ is an approximation.
+-   Exact calculation: $\sqrt{e^{\omega^2}-1}$.
+:::
+
+::: {.column width="50%"}
+```{r cv_comparison}
+#| echo: true
+#| eval: true
+#| code-fold: true
+#| code-summary: "Code"
+
+data <- data.frame(`OMEGA2`=seq(0, 1, 0.01)) %>% 
+  mutate(`CV_approx` = sqrt(`OMEGA2`)*100, 
+         `CV_exact`  = sqrt(exp(`OMEGA2`)-1)*100) %>% 
+  pivot_longer(cols = starts_with("CV"), names_to = "name", values_to = "CV%")
+
+ggplot(data, aes(x=`OMEGA2`, y=`CV%`, group=name, color=name))+geom_line()+
+  geom_vline(aes(xintercept=0.1), linetype=2)+
+  geom_vline(aes(xintercept=0.5), linetype=2)+
+  theme(legend.position = "bottom", legend.title = element_blank())
+```
+:::
+:::
+
+## RUV
+
+$$
+Y_{ij} = f(\theta_{i}, U_i, t_{ij}) + \epsilon_{ij} \\
+\theta_{i} = d(\color{red}{\hat{\theta}}, COV_i, \eta_i) \\
+\eta_i \sim N(0, \color{red}{\omega^2}) \\
+\epsilon_ij \sim N(0, \color{red}{\sigma^2})
+$$
+
+-   NONMEM estimates the magnitude of the variance of a parameter in the population.
+
+-   RUV is the variability in the prediction errors after the other models are included.
+
+-   Output population parameter is $\sigma^2$: the variance of $\epsilon_{ij}$ distribution.
+
+    -   Although $\epsilon_{ij}$ will also be estimated, it is not considered as population parameters.
+
+-   In NONMEM, to specify a MODEL for RUV, we write it in terms of EPS/ERR, and say SIGMA is the standard deviation of the EPS/ERR.
+
+## RUV
+
+-   A couple of main choices:
+
+    -   Additive error model
+
+    -   Proportional error model
+
+    -   Combined error model
+
+## Additive error model
+
+$Y = IPRED + EPS(1)$[^2]
+
+[^2]: Where Y represents observations; IPRED represents individual predictions; EPS(1) represents individual residual errors (one per observations).
+
+-   SIGMA is the variability, usually reported as the SD across all concentrations.
+    -   Constant SD for all concentrations
+        -   For example: An observation with 10 mg/L concentration has the same absolute residual error compared to one with 1 mg/L concentration.
+    -   If $SIGMA(1)^2 = 5.29$, SD is 2.3 mg/L ($\sqrt{5.29}=2.3$)
+-   May be appropriate with concentrations over a limited range, such as TDM data
+
+## Proportional error model
+
+$Y = IPRED*(1 + EPS(1))$[^3]
+
+[^3]: Where Y represents observations; IPRED represents individual predictions; EPS(1) represents individual residual errors (one per observations).
+
+-   SIGMA is the variability, usually reported as the % coefficient of variations (CV%) across all concentrations.
+    -   Noise is proportional to the signal (Constant CV)
+        -   For example: An observation with 10 mg/L concentration has proportionally higher absolute residual error than one with 1 mg/L concentration.
+    -   If $SIGMA(1)^2 = 0.0234$, CV% is 15.3% ($\sqrt{0.0234}=0.153$)
+-   Commonly used in PK modeling.
+
+## Combined error model
+
+$Y = IPRED*(1 + EPS(1)) + EPS(2)$[^4]
+
+[^4]: Where Y represents observations; IPRED represents individual predictions; EPS(1) and EPS(2) represent individual proportional and additive residual errors, respectively (one per observations).
+
+-   Have both proportional and addItive components.
+
+-   At low concentrations:
+
+    -   $IPRED*EPS(1)$ is insignificant.
+
+    -   $EPS(2)$ is dominate.
+
+-   At high concentrations:
+
+    -   $IPRED*EPS(1)$ is dominate.
+
+    -   $EPS(2)$ is insignificant. - CV decreases and plateaus.
+
+## Combined error model
+
+```{r combined_error_model}
+#| echo: true
+#| eval: true
+#| code-fold: true
+#| code-summary: "Code"
+
+data <- data.frame(Concentration=seq(0.1, 5, 0.01)) %>% 
+  mutate(Y=Concentration*(1+0.1)+0.05, 
+         `CV%` = (Concentration*0.1+0.05)/Concentration*100)
+
+ggplot(data, aes(x=Concentration, y=`CV%`))+geom_line()
+```
+
+## Combined error model
+
+::: columns
+::: {.column width="50%"}
+Variance method ("combined 2" error model in Monolix):
+
+``` text
+...
+$ERROR 
+...
+Y = IPRED + IPRED*EPS(1) + EPS(2)
+...
+
+$OMEGA
+0.01
+0.01
+```
+
+``` text
+...
+$ERROR 
+...
+W = SQRT((SD1*IPRED)**2 + SD2**2)
+Y = IPRED + W*EPS(1)
+...
+
+$OMEGA
+1 FIX
+```
+:::
+
+::: {.column width="50%"}
+Standard deviation method: ("combined 1" error model in Monolix)
+
+``` text
+...
+$ERROR 
+...
+W = SD1*IPRED + SD2
+Y = IPRED + W*EPS(1)
+...
+
+$OMEGA
+1 FIX
+```
+:::
+:::
+
+## Difference between two combined error model[^5]
+
+[^5]: Proost JH. (2017) *European Journal of Pharmaceutical Sciences*
+
+![](./pics/combined_error_model.png){width="60%"}
+
+## Writing a NONMEM control stream
+
+-   Name of data file; where does it live?
+-   Where are covariates in dataset?
+-   Which PK model (1cpt vs 2cpt vs …)?
+-   How is it parameterized (CL, V, K10, beta, …)?
+-   What are the covariate models?
+-   What are the BSV models?
+-   What is the RUV model?
+-   What are the initial parameter estimates?
+-   What do I want in output tables?
+
+## Writing a NONMEM control stream
+
+-   NMTRAN Control Stream
+-   Text file (`.ctl` or `.mod`)
+-   All the instructions NONMEM needs to complete the run
+-   Control records
+    -   `$PROB`, `$PK`
+    -   Some required, some optional
+    -   Many options
+
+## Example NONMEM control stream
+
+``` bash
+$PROBLEM THEOPHYLLINE SINGLE SUBJECT DATA
+$INPUT DOSE=AMT TIME CP=DV
+$DATA DATA3
+$SUBROUTINES ADVAN2
+$PK
+    KA=THETA(1)
+    K=THETA(2)
+    SC=THETA(3)
+$ERROR
+    Y=F+ERR(1)
+$THETA 
+    (0,1.7) 
+    (0,.102) 
+    (0,29)
+$ESTIMATION MAXEVAL=240 PRINT=2
+$COVR
+$TABLE TIME
+```
+
+## `$PROB`
+
+-   Same to `$PROBLEM`
+-   Specify the run number and any text you want to identify this particular run.
+-   `$PROB run001 BASE MODEL`
+-   `$PROB run002 test WT on CL`
+
+## `$INPUT`
+
+-   Same to `$INPT`
+-   A list of labels to describe what’s in the data file, i.e., the column headings
+-   `$INPUT C, ID, TIME, AMT, DV, SS, II, WT, AGE, HT, PHTY, GENO, …`
+-   Some are required for NONMEM, others for PREDPP:
+    -   Reserved data items: `ID, L1, L2, DV, MDV, TIME, DATE`, etc
+-   **CAREFUL**: NONMEM will NOT match these labels to labels on the columns of the dataset
+-   Previously, labels limited to 4 characters; now 20
+-   Previously, limited to 20 data items; now 50
+-   Can use `HT=DROP` to drop or skip a column
+
+## `$DATA`
+
+::: columns
+::: {.column width="70%"}
+-   Name and path to your data file
+-   Usually a `.csv` file
+-   `IGNORE=C` (or `IGNORE=@`)
+    -   Optional; directs NMTRAN to ignore any row in the data set that has a C (or any character) in the first column
+    -   Allows you to NOT physically delete the record
+    -   Useful for missing data, BQL, ignoring outliers
+    -   Useful for analyzing a subset of dataset
+-   `$DATA moxidata.csv IGNORE=C`
+
+:::
+
+::: {.column width="30%"}
+|  C  | ID  | TIME | DV  |
+|:---:|:---:|:----:|:---:|
+|  .  |  1  |  12  | 12  |
+|  .  |  1  | 123  | 123 |
+|  C  |  1  | 124  |  1  |
+:::
+:::
+
+## `$SUBROUTINES`
+
+-   Same to `$SUB`
+-   This is where you specify your PK model
+    -   ADVANx: compartmental model
+    -   TRANSx: choice of parameterization
+-   `$SUB ADVAN2 TRANS2`
+
+## `ADVANx` can specify a pre-defined PK Model
+
+-   ADVAN1: 1-cpt IV
+-   ADVAN2: 1-cpt extravascular/IV
+-   ADVAN3: 2-cpt IV
+-   ADVAN4: 2-cpt extravascular/IV
+-   ADVAN10: 1-cpt with Michaelis-Menten elimination
+-   ADVAN11: 3-cpt IV
+-   ADVAN12: 3-cpt extravascular/IV
+
+## `ADVANx` can specify a user-input ODE model
+
+-   General Nonlinear Model: ADVAN6, 8, 9, and 13-15, requires `$DES`
+-   General Linear Model: ADVAN5 and 7.
+
+## `TRANSx` specifies the parameterization
+
+-   1-cpt extravascular PK model
+    -   `ADVAN2 TRANS1`: K, V, and KA as parameters.
+    -   `ADVAN2 TRANS2`: CL, V, and KA as parameters.
+-   2-cpt extravascular PK model
+    -   `ADVAN4 TRANS4`: CL, V2, Q, V3, and KA as parameters.
+    -   `ADVAN4 TRANS1`: K23, K32, K, V2, and KA as parameters.
+    -   `TRANS3`, `TRANS5` and `TRANS6`.
+
+## `$PK`
+
+-   The fun part!\
+-   Where you build your population model.
+-   Depending on your choice of ADVAN and TRANS, certain variable names will be required (more later).
+-   `$PK` calculates the predicted DV under the model.
+-   NONMEM is moving mass of drug through the compartments, however, we usually measure concentration.
+-   `$PK` is computing the predicted “scaled drug amount” (scaling factors: `S1`, `S2`, `SC`, etc).
+
+## `$PK` example
+
+``` bash
+$PK
+TVCL=THETA(1) + THETA(2)*WT
+   CL=TVCL*EXP(ETA(1))
+TVV=THETA(2)
+   V=TVV*EXP(ETA(2))
+SC=V
+```
+
+## `$ERROR`
+
+-   This is where you build your Residual Unexplained Variability (RUV) model
+-   `$PK` calculates the predicted value and passes it on to `$ERROR` in the variable named F
+-   `$ERROR` can modify the prediction, and can be used to define a PD relationship, say, convert Cp to E through a PD model
+
+## `$ERROR` example
+
+``` bash
+$ERROR 
+IPRED = F
+Y = IPRED*(1+EPS(1))
+```
+
+``` bash
+$ERROR 
+IPRED = A(2)/V2
+Y = IPRED*(1+EPS(1))+EPS(2)
+```
+
+## `$THETA`
+
+-   Initial estimates of each THETA
+-   Can also include lower and upper bounds
+-   Must have an initial estimate for every THETA
+
+``` bash
+$THETA
+   (0,10,)      ;CL     [lower, initial, +inf]
+   (0,34,70)    ;V      [lower, initial, upper]
+   (1.5 FIX)    ;Ka     [parameter fixed]
+   (,-6,)       ;THETAx [-inf, -6, +inf]
+   (-4)         ;THETAx [-inf, -4, +inf]
+   (,-5,0)      ;THETAx [-inf, -5, upper]
+```
+
+## `$OMEGA`
+
+-   Initial estimates for BSV
+-   A reasonable first guess is that the CV of a parameter is about 30%
+    -   0.3 x 0.3 = 0.09
+-   Don’t include bounds
+
+``` bash
+$OMEGA
+    0.1   ; about 30% BSV on CL
+    0.1   ; about 30% BSV on V
+```
+
+## `$SIGMA`
+
+-   Initial estimates for RUV
+-   Assuming a proportional error model, a reasonable first guess is that the CV of concentration predictions (e.g., PK) is about 10%
+    -   0.1 x 0.1 = 0.01
+-   Don’t include bounds
+
+``` bash
+$SIGMA
+    0.01    ; about 10% RUV proportional error
+```
+
+## `$ESTIMATION`
+
+-   Same to `$EST`.
+-   LOTS of options specific to the estimation procedure.
+-   `$EST  METHOD=1 INTERACTION MAXEVAL=9999 SIG=3 NSIG=9 PRINT=1 MSF=001.msf`
+    -   An example `$EST` using First-Order Conditional Estimation with $\eta$-$\epsilon$ Interactions (FOCE+I).
+-   And a whole lot more – don’t worry about them now.
+
+## `COVARIANCE`
+
+-   Same to `$COV`.
+-   Directs NONMEM to compute the covariance matrix.
+-   Source of asymptotic standard errors.
+-   `PRINT=E`, request eigenvalues (for condition number calculation).
+
+`$COV PRINT=E`
+
+## `$TABLE`
+
+-   Specify to request NONMEM output for post-processing.
+    -   Several may be requested.
+    -   By default, table is printed in final NONMEM output report (`.lst`), use `NOPRINT` to waive this.
+    -   By default, append `DV PRED RES WRES` to each output table, use `NOAPPEND` to waive this.
+    -   `ONEHEADER`: only the first segment of each table has a header.
+    -   `FIRSTONLY`: only information corresponding to the first data record from each individual record appears in the table.
+
+``` bash
+$TABLE NUM ID TIME DV MDV EVID IPRED NPDE CWRES NOPRINT ONEHEADER FILE=sdtab1        ; Model predictions and residuals
+$TABLE NUM ID CL V  KA ETAS(1:LAST) NOAPPEND NOPRINT ONEHEADER FIRSTONLY FILE=patab1 ; Model parameters
+$TABLE NUM ID SEX GENO NOAPPEND ONEHEADER NOPRINT FILE=catab1                        ; Categorical covariates
+$TABLE NUM ID AGE ALB SCR WT HT BSA EGFR DOSE NOAPPEND ONEHEADER NOPRINT FILE=cotab1 ; Continuous covariates
+```
+
+## `$TABLE`
+
+-   Finch Studio has rules for table output names, for the full use of its functionality[^6].
+
+[^6]: <https://docs.finchstudio.io/data/#mapping-your-data>
+
+![](./pics/fs-data-rule.png)
+
+## Finch Studio directory structure
+
+::: columns
+::: {.column width="30%"}
+![](./pics/fs-directory-structure.png)
+:::
+
+::: {.column width="70%"}
+-   "Convention over configuration"[^7]
+    -   All projects must have the same file structure conventions.
+    -   Any name for `Directory` and `Project n` (e.g., `Directory` may be compound-specific, `Project n` may be a specific analysis).
+    -   All project sub-directory must have `models` and `data` folders.
+    -   Any name for `NM_data.csv`
+    -   All model controls streams must have a file name of `mod1.ctl`.
+        -   A suffix of 1 to make projects more compatible with post-processing tools such as `Xpose`.
+:::
+:::
+
+[^7]: <https://docs.finchstudio.io/installation/getting-started.html#directory-structure>
+
+## Useful references
+
+-   Finch Studio Directory Structure: <https://docs.finchstudio.io/installation/getting-started.html#directory-structure>
+-   pkpd-info.com: <https://pkpd-info.com/NONMEM/Model_templates.php>

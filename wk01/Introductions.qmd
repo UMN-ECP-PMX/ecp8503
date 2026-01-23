@@ -130,8 +130,8 @@ Assuming you have taken introductory level population PK course (e.g., ECP8502):
 ## SSH
 
 -   Follow the [tutorial](https://msi.umn.edu/our-resources/knowledge-base/interactive-connections-faqs/how-do-i-setup-ssh-keys) specified by MSI to setup SSH key in your local computer.
-    -   **Steps 1 and 2 are required**. 
-    -   Step 3 (SSH agent activation step) is optional,  and may be a little different on Windows
+    -   **Steps 1 and 2 are required**.
+    -   Step 3 (SSH agent activation step) is optional, and may be a little different on Windows
         -   Open PowerShell on Windows:
         -   Run commands:
             -   `Get-Service ssh-agent`

@@ -493,6 +493,21 @@ $OMEGA
     0.1   ; about 30% BSV on V
 ```
 
+## `$OMEGA`
+
+-   Can have more than one `$OMEGA`
+-   Can incorporate off-diagonal elements (block matrices) to characterize covariance/correlations among BSVs.  
+
+```{.bash}
+$OMEGA BLOCK(2) ; VARIANCE COVARIANCE BLOCK(2)
+ 0.64           ; CL
+ -0.24 0.58     ; V
+
+$OMEGA
+  0.1           ; KA
+```
+
+
 ## `$SIGMA`
 
 -   Initial estimates for RUV

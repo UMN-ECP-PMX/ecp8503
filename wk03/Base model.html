@@ -1758,6 +1758,19 @@ Y_{ij} = f(\theta_{i}, U_i, t_{ij}) + \epsilon_{ij} \\
 <span id="cb11-2"><a href="#cb11-2"></a>    <span class="ex">0.1</span>   <span class="kw">;</span> <span class="ex">about</span> 30% BSV on CL</span>
 <span id="cb11-3"><a href="#cb11-3"></a>    <span class="ex">0.1</span>   <span class="kw">;</span> <span class="ex">about</span> 30% BSV on V</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
+<section id="omega-1" class="slide level2">
+<h2><code>$OMEGA</code></h2>
+<ul>
+<li>Can have more than one <code>$OMEGA</code></li>
+<li>Can incorporate off-diagonal elements (block matrices) to characterize covariance/correlations among BSVs.</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1"></a><span class="va">$OMEGA</span> BLOCK<span class="er">(</span><span class="ex">2</span><span class="kw">)</span> <span class="kw">;</span> <span class="ex">VARIANCE</span> COVARIANCE BLOCK<span class="er">(</span><span class="ex">2</span><span class="kw">)</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a> <span class="ex">0.64</span>           <span class="kw">;</span> <span class="ex">CL</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a> <span class="ex">-0.24</span> 0.58     <span class="kw">;</span> <span class="ex">V</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a></span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="va">$OMEGA</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>  <span class="ex">0.1</span>           <span class="kw">;</span> <span class="ex">KA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
 <section id="sigma" class="slide level2">
 <h2><code>$SIGMA</code></h2>
 <ul>
@@ -1768,8 +1781,8 @@ Y_{ij} = f(\theta_{i}, U_i, t_{ij}) + \epsilon_{ij} \\
 </ul></li>
 <li>Don’t include bounds</li>
 </ul>
-<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1"></a><span class="va">$SIGMA</span></span>
-<span id="cb12-2"><a href="#cb12-2"></a>    <span class="ex">0.01</span>    <span class="kw">;</span> <span class="ex">about</span> 10% RUV proportional error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1"></a><span class="va">$SIGMA</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>    <span class="ex">0.01</span>    <span class="kw">;</span> <span class="ex">about</span> 10% RUV proportional error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="estimation" class="slide level2">
 <h2><code>$ESTIMATION</code></h2>
@@ -1805,10 +1818,10 @@ Y_{ij} = f(\theta_{i}, U_i, t_{ij}) + \epsilon_{ij} \\
 <li><code>FIRSTONLY</code>: only information corresponding to the first data record from each individual record appears in the table.</li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1"></a><span class="va">$TABLE</span> NUM ID TIME DV MDV EVID IPRED NPDE CWRES NOPRINT ONEHEADER FILE=sdtab1        <span class="kw">;</span> <span class="ex">Model</span> predictions and residuals</span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="va">$TABLE</span> NUM ID CL V  KA ETAS<span class="er">(</span><span class="ex">1:LAST</span><span class="kw">)</span> <span class="ex">NOAPPEND</span> NOPRINT ONEHEADER FIRSTONLY FILE=patab1 <span class="kw">;</span> <span class="ex">Model</span> parameters</span>
-<span id="cb13-3"><a href="#cb13-3"></a><span class="va">$TABLE</span> NUM ID SEX GENO NOAPPEND ONEHEADER NOPRINT FILE=catab1                        <span class="kw">;</span> <span class="ex">Categorical</span> covariates</span>
-<span id="cb13-4"><a href="#cb13-4"></a><span class="va">$TABLE</span> NUM ID AGE ALB SCR WT HT BSA EGFR DOSE NOAPPEND ONEHEADER NOPRINT FILE=cotab1 <span class="kw">;</span> <span class="ex">Continuous</span> covariates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="va">$TABLE</span> NUM ID TIME DV MDV EVID IPRED NPDE CWRES NOPRINT ONEHEADER FILE=sdtab1        <span class="kw">;</span> <span class="ex">Model</span> predictions and residuals</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="va">$TABLE</span> NUM ID CL V  KA ETAS<span class="er">(</span><span class="ex">1:LAST</span><span class="kw">)</span> <span class="ex">NOAPPEND</span> NOPRINT ONEHEADER FIRSTONLY FILE=patab1 <span class="kw">;</span> <span class="ex">Model</span> parameters</span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="va">$TABLE</span> NUM ID SEX GENO NOAPPEND ONEHEADER NOPRINT FILE=catab1                        <span class="kw">;</span> <span class="ex">Categorical</span> covariates</span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="va">$TABLE</span> NUM ID AGE ALB SCR WT HT BSA EGFR DOSE NOAPPEND ONEHEADER NOPRINT FILE=cotab1 <span class="kw">;</span> <span class="ex">Continuous</span> covariates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="table-1" class="slide level2">
 <h2><code>$TABLE</code></h2>

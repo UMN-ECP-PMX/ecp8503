@@ -101,6 +101,13 @@ $$
     -   No between subject variability (i.e., zero variance)
     -   Model 2 (the larger model) reduces to Model 1 (the smaller model).
     -   Model 1 is nested within Model 2.
+    
+## Degree of Freedom (DF)
+-   The difference in the number of parameters between two models (competing vs. base models).
+-   The number of parameters being set to their null value to make equalivalence of two models. 
+    -   Base model: `CL = THETA(1)`
+    -   Competing model: `CL = THETA(1) * EXP(ETA(1))`
+    -   DF=1 when comparing two models. 
 
 ## Nesting model comparison: likelihood ratio test (LRT)
 

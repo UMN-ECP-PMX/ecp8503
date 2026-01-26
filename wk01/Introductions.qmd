@@ -131,6 +131,39 @@ Assuming you have taken introductory level population PK course (e.g., ECP8502):
 
 -   Follow the [tutorial](https://msi.umn.edu/our-resources/knowledge-base/interactive-connections-faqs/how-do-i-setup-ssh-keys) specified by MSI to setup SSH key in your local computer.
     -   **Steps 1 and 2 are required**.
+    -   Create `~/.ssh/config` locally.
+        -   Mac user:
+
+            -   `cd ~/.ssh`
+            -   `ls`
+            -   `touch ~/.ssh/config`
+            -   Open config, copy and paste the following scripts. Replace `your.msi.username` with your X500 and save it.
+
+            ``` bash
+            Host agate.msi.umn.edu
+            HostName agate.msi.umn.edu
+            User your.msi.username
+            IdentityFile ~/.ssh/id_rsa
+            ```
+
+        -   Windows user (required):
+
+            -   `cd ~/.ssh`
+            -   `ls`
+            -   `notepad ~/.ssh/config`
+            -   Open config, copy and paste the following scripts. Replace `your.msi.username` with your X500 and save it.
+
+            ``` bash
+            Host agate.msi.umn.edu
+            User your.msi.username
+            IdentityFile ~/.ssh/id_rsa
+            IdentitiesOnly yes
+            AddKeysToAgent yes
+            ```
+
+            -   In terminal, type `mv config.txt config`
+            -   If you do `ssh agate.msi.umn.edu`, it should ask you for passphrase now instead of password!
+            
     -   Step 3 (SSH agent activation step) is optional, and may be a little different on Windows
         -   Open PowerShell on Windows:
         -   Run commands:
@@ -139,19 +172,6 @@ Assuming you have taken introductory level population PK course (e.g., ECP8502):
             -   `Set-Service ssh-agent -StartupType Automatic`
             -   `ssh-add $env:USERPROFILE\.ssh\id_rsa`
             -   `ssh-add -l`
--   Create `~/.ssh/config` locally (optional).
-    -   `cd ~/.ssh`
-        -   `ls`
-    -   `touch ~/.ssh/config`
-        -   On windows `touch` won't work, `notepad ~/.ssh/config` should be used instead.
-    -   Open config, copy and paste the following scripts. Replace `your.msi.username` with your X500 and save it.
-
-``` bash
-Host agate.msi.umn.edu
-HostName agate.msi.umn.edu
-User your.msi.username
-IdentityFile ~/.ssh/id_rsa
-```
 
 ## Github
 

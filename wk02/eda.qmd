@@ -1,0 +1,183 @@
+---
+title: "Exploratory Data Analysis - nmdat1.csv"
+format: html
+---
+
+
+```{r}
+#| warning: false
+#| message: false
+.libPaths("~/renv/renv/library/R-4.5/aarch64-apple-darwin20/")
+library(pmplots)
+library(pmtables)
+library(yspec)
+library(dplyr)
+library(here)
+library(ggplot2)
+library(data.table)
+theme_set(theme_bw())
+```
+
+
+```{r}
+full <- fread(here("model1/data/nmdat1.csv"), na.strings = ".")
+
+
+```
+
+# Get Started
+
+
+## Basic inventory of the data
+
+- Include all observation records (`EVID==0`) _and_ any `BLQ` records.
+- I'm stratifying (or splitting) the data by all the categorical covariates
+  I see in the data.
+- We also get the inventory for all the data.
+
+```{r}
+data <- filter(full, EVID==0)
+
+pt_inventory_long(data, cols = c("DOSE", "GENO", "SEX")) %>% 
+  st_as_image()
+```
+
+
+
+## Make a simple plot
+
+
+- First on cartesian scale (untransformed
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5
+ggplot(data, aes(TIME, DV)) + geom_point()
+```
+
+- I like to update the x-axis tick labels to be more intuitive
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5
+ggplot(data, aes(TIME, DV)) + geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4))
+```
+
+- And we frequently would rater see this on log scale
+```{r}
+
+#| fig-width: 7
+#| fig-height: 5
+ggplot(data, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10()
+```
+
+- I like to have a tick label _above_ the highest observation
+
+```{r}
+ggplot(data, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(NA, 10000))
+```
+
+- Let's drop the BLQ observations
+
+
+```{r}
+obs <- filter(data, BLQ==0)
+
+ggplot(obs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(NA, 10000))
+```
+
+
+- Let's give this proper labels
+
+```{r}
+ggplot(obs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(NA, 10000)) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)")
+```
+
+
+# Dig deeper into the covariates
+
+
+
+- First, get a data set with baseline covariates
+
+```{r}
+id <- 
+  obs %>% 
+  slice(1, .by = ID) %>% 
+  mutate(across(c(SEX, DOSE, GENO), ~ factor(.x)))
+```
+
+
+## Covariates - tabular summary
+
+```{r}
+pt_demographics(
+  id, 
+  cols_cat = c("SEX", "GENO"), 
+  cols_cont = c("ALB", "WT", "BSA", "EGFR"),
+  span = "DOSE"
+) %>% st_as_image()
+```
+
+```{r}
+pt_demographics(
+  id, 
+  cols_cat = c("SEX", "DOSE"), 
+  cols_cont = c("ALB", "WT", "BSA", "EGFR"),
+  span = "GENO"
+) %>% st_as_image()
+```
+
+## Covariates - graphical summary
+
+
+```{r}
+pl <- list_plot_x(
+  id,
+  x = c("SEX", "DOSE", "GENO"), 
+  y = c("ALB", "WT", "BSA", "EGFR"), 
+  .fun = cont_cat
+)
+pl <- lapply(pl, pm_grid, ncol = 2)
+pl
+```
+
+- What's the difference with these plots?
+
+```{r}
+pl <- list_plot_y(
+  id,
+  x = c("SEX", "DOSE", "GENO"), 
+  y = c("ALB", "WT", "BSA", "EGFR"), 
+  .fun = cont_cat
+)
+pl <- lapply(pl, pm_grid, ncol = 2)
+pl
+```
+
+
+
+## Covariates - correlations
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 8
+#| warning: false
+pairs_plot(id, y = c("ALB", "WT", "BSA", "EGFR"))
+```
+

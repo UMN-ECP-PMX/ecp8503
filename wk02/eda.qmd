@@ -1,6 +1,9 @@
 ---
 title: "Exploratory Data Analysis - nmdat1.csv"
-format: html
+format: 
+  html: 
+    toc: true
+    number-sections: true
 ---
 
 
@@ -15,15 +18,28 @@ library(dplyr)
 library(here)
 library(ggplot2)
 library(data.table)
-theme_set(theme_bw())
+library(lastdose)
+theme_set(theme_bw() + theme(legend.position = "top"))
+options(ggplot2.discrete.colour = RColorBrewer::brewer.pal(name = "Dark2", n = 8))
+options(ggplot2.discrete.fill = RColorBrewer::brewer.pal(name = "Dark2", n = 8))
 ```
 
 
 ```{r}
 full <- fread(here("model1/data/nmdat1.csv"), na.strings = ".")
-
-
 ```
+
+Calculate time after last dose
+```{r}
+full <- lastdose(full)
+
+head(full)
+```
+
+```{r}
+count(full, OCC)
+```
+
 
 # Get Started
 
@@ -46,14 +62,14 @@ pt_inventory_long(data, cols = c("DOSE", "GENO", "SEX")) %>%
 
 ## Make a simple plot
 
-
-- First on cartesian scale (untransformed
-
 ```{r}
 #| fig-width: 7
 #| fig-height: 5
 ggplot(data, aes(TIME, DV)) + geom_point()
 ```
+
+
+## Customize the plot
 
 - I like to update the x-axis tick labels to be more intuitive
 
@@ -109,8 +125,6 @@ ggplot(obs, aes(TIME, DV)) +
 
 
 # Dig deeper into the covariates
-
-
 
 - First, get a data set with baseline covariates
 
@@ -169,15 +183,63 @@ pl <- lapply(pl, pm_grid, ncol = 2)
 pl
 ```
 
-
-
 ## Covariates - correlations
 
-
 ```{r}
-#| fig-width: 8
-#| fig-height: 8
+#| fig-width: 6
+#| fig-height: 6
 #| warning: false
 pairs_plot(id, y = c("ALB", "WT", "BSA", "EGFR"))
 ```
 
+# How does PK differ across different covariates?
+
+
+## By dose
+
+```{r}
+#| fig-width: 9
+#| fig-height: 5
+ggplot(obs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(NA, 10000)) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)") + 
+  facet_grid(~DOSE)
+```
+
+- I wouldn't rely on color to separate the data
+
+```{r}
+ggplot(obs, aes(TIME, DV, col = factor(DOSE))) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(NA, 10000)) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)")
+```
+
+## By genotype
+
+
+```{r}
+#| fig-width: 9
+#| fig-height: 9
+ggplot(obs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(NA, 10000)) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)") + 
+  facet_grid(DOSE~GENO)
+```
+
+```{r}
+#| fig-width: 9
+#| fig-height: 8
+ggplot(obs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(NA, 10000)) + 
+  geom_hline(yintercept = c(300, 1000, 3000), lty = 2) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)") + 
+  facet_grid(DOSE~GENO)
+```

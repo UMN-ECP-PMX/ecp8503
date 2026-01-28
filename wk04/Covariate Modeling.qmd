@@ -133,11 +133,11 @@ Pre-defined methods:
 ## Selection methods-(SCM)
 
 ::: columns
-::: {.column width="50%"}
+::: {.column width="70%"}
 ![](./pics/scm.png)
 :::
 
-::: {.column width="50%"}
+::: {.column width="30%"}
 -   Forward selection (univariate)
     -   Base model -\> Add one covariate -\> Significantly better? -\> Yes, selected
     -   Base model -\> Add another covariate -\> Significantly better? -\> No, not selected
@@ -153,7 +153,7 @@ Pre-defined methods:
 
 [^1]: Full model: the model include all covariates screened in univariate forward selection.
 
-[^2]: P-values during BE are often stricter.
+[^2]: P-values during backward elimination are often stricter.
 
 ## Nesting example
 
@@ -247,39 +247,45 @@ IF(SEX.EQ.0) TVCL = TVCL*THETA(2)
 -   Statistical significant?
     -   dOFV=21.3-20.1=1.2
     -   Using a P value criteria (0.01) with 1 DF, only if dOFV\>6.63, the COV is considered statistically significant.
--   Statistically insignificant $\neq$ clinically inrelevant
+-   Statistically insignificant $\neq$ clinically irrelevant
     -   Maybe your sample size is too small (n=8).
     -   Although COV effect is large (60%), the study is not sufficiently powered to detect it
 
 ## Pre-defined methods: FFEM
 
-Full fixed-effect modeling (FFEM)[^3] procedure: 
--   Develop a stable base model. 
--   **Thoughful** consideration given to potential covariate-parameter relationships. 
--   Full covariate model is constructed and checked for goodness-of-fit. 
--   Check point estimates and 95% confidence intervals (CIs). 
-    -   Unimportant covariates are driven to 0 during estimation with wide CIs. 
-    -   If the inclusion of an unimportant covariate makes a model "unstable", consider exclude it from the model.
-        -   Model cannot converge
-        -   Covariance step fails
-        -   Very wide and unacceptable CIs (e.g., 2000% relative standard error)
--   Make inference based on simulations using point estimates and 95% CIs. 
+Full fixed-effect modeling (FFEM)\[\^3\] procedure:
 
-[^3] Marc Gastonguay. *PAGE*. 2004.
+-   Develop a stable base model.
 
-## Forest plot 
+-   **Thoughful** consideration given to potential covariate-parameter relationships.
 
-![](./pics/forest-plot.png)
+-   Full covariate model is constructed and checked for goodness-of-fit.
 
-## **Thoughful** considerations: 
+-   Check point estimates and 95% confidence intervals (CIs).
 
-incorporate covariate effects in the model based on[^3]: 
+    -   Unimportant covariates are driven to 0 during estimation with wide CIs.
 
--   Scientific and clinical interest. 
--   Mechanistic plausibility. 
+-   If the inclusion of an unimportant covariate makes a model "unstable", consider exclude it from the model.
+
+    -   Model cannot converge
+
+    -   Covariance step fails
+
+    -   Very wide and unacceptable CIs (e.g., 2000% relative standard error)
+
+-   Make inference based on simulations using point estimates and 95% CIs.
+
+\[\^3\] Marc Gastonguay. *PAGE*. 2004.
+
+## **Thoughful** considerations:
+
+incorporate covariate effects in the model based on\[\^3\]:
+
+-   Scientific and clinical interest.
+-   Mechanistic plausibility.
 -   Prior knowledge of covariate effect (e.g., body size on CL).
 -   Exploratory graphics (e.g., trend of parameter vs. covariate relationships)
--   Avoid simultaneous inclusion of correlated/collinear covariates. 
+-   Avoid simultaneous inclusion of correlated/collinear covariates.
 
 ## Exploratory graphics implying covariate-parameter relationships
 
@@ -287,18 +293,202 @@ incorporate covariate effects in the model based on[^3]:
 
 ## Cautious evaluating corrleation/collinrarity (more important for FFEM)
 
-![](./pics/pairs-plot.png)
+```{r pairs_plot}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show the code"
 
-## Cautious evaluating corrleation/collinrarity (more important for FFEM)
+library(tidyverse)
+library(car)
+library(here)
+library(yspec)
+library(GGally)
 
-![](./pics/boxplot.png)
+data <- readr::read_csv(
+  here::here("wk04", "data", "pk.csv"),
+  na = "."
+)
 
-## Variance inflation factor (VIF) analysis
+# Spec
+spec <- yspec::load_spec(
+  here::here("wk04", "data", "pk.yml")
+)
 
-```{r}
+# Flags 
+flags <- pull_meta(spec, "flags")
+
+id <- data %>% distinct(ID, .keep_all = TRUE) %>% 
+  ys_add_factors(spec,flags$edaCatCov,.suffix = "")
+
+cov_all <- id %>% dplyr::select(DOSE, # dose was intented to be used as the outcome
+                                flags$edaCatCov, 
+                                flags$edaContCov) 
+
+# names(cov_all)
+
+# Examine correlation graphically
+pmplots::pairs_plot(id, flags$edaContCov)
+```
+
+## Cautious evaluating corrleation/collinrarity
+
+```{r boxplot}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show the code"
+
+pmplots::pm_grid(
+  pmplots::wrap_cont_cat(id, x=flags$edaCatCov, y="WT") %>% 
+    purrr::map(~ .x +pmplots::rot_x(angle=60)), 
+  ncol = 3
+  )
 
 ```
 
+## Variance inflation factor (VIF) for multicollinearity assessment
 
+-   A metric used in multiple regression to assess correlation among predictors (independent variables).
+-   Measures how much the variance of an estimated regression coefficient is increased due to collinearity.
 
-## Pros and Cons
+For a covariate with 1 degree of freedom ($df_i$):
+
+$$
+VIF_i = \frac{1}{1-R_i^2}
+$$
+
+For a general covariate with $\geq1$ degree of freedom ($df_i$)[^3]:
+
+[^3]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
+
+$$
+GVIF_i = \frac{det(V_{jj})}{det(V_{jj}^*)} \\
+aGVIF=GVIF^{1/(2\times df_i)}
+$$
+
+-   Provide a method to globally pre-screen covariate collinearity, include both continuous and categorical covariates, before NLME covariate modeling.
+
+## Variance inflation factor (VIF) criteria
+
+$$
+VIF_i = \frac{1}{1-R_i^2}
+$$
+
+-   VIF=1: no collinearity ($R_i^2=0$)
+-   VIF=2: mild-moderate collinearity ($R_i^2=0.5$)
+-   VIF=5: moderate-high collinearity ($R_i^2=0.8$)
+-   VIF=10: high collinearity ($R_i^2=0.9$)
+-   Usually target VIF\<2, ideally VIF\<1.5.
+
+## Variance inflation factor (VIF) implementations
+
+::: columns
+::: {.column width="50%"}
+```{r vif_full}
+#| echo: true
+
+# Fit full model
+mod_full <- glm(DOSE ~ ., data = cov_all, family = "gaussian")
+
+# Extract full model VIF
+vif_full <- car::vif(mod_full)
+vif_full
+```
+:::
+
+::: {.column width="50%"}
+```{r vif_reduce}
+#| echo: true
+
+# Fit reduced model
+mod_reduce <- glm(DOSE ~ ., 
+                  data = cov_all %>% dplyr::select(-ALB, # correlates with CP
+                                                   -RF,  # correlates with EGFR
+                                                   -STUDY), # correlates with multiple covariates
+            family = "gaussian")
+
+# Extract reduced model VIF
+vif_reduce <- car::vif(mod_reduce)
+vif_reduce
+
+```
+:::
+:::
+
+## Construct FFEM[^4]
+
+[^4]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
+
+$$
+TVP = \theta_n \times \prod_{1}^{m} (\frac{COV_{mi}}{ref_m})^{\theta_(m+n)}\times \prod_{1}^{p}\theta_{p+m+n}^{COV_{pi}}
+$$
+
+-   $TVP$: typical value of a model parameter.
+-   $COV_{mi}$: $m^{th}$ individual continuous covariate with $ref_m$ as the reference value.
+-   $COV_{pi}$: $p^{th}$ individual categorical covariate (e.g., binary 0 or 1).
+-   $\theta_n$: estimated parameter describing $TVP$ for an individual with
+    -   $COV_{mi} =ref_{m}$
+    -   $COV_{pi} = 0$
+-   $\theta_{m+n}$ and $\theta_{p+m+n}$: estimated parameters describing the magnitude of the covariate-parameter relationship.
+
+## Construct FFEM example
+
+$$
+TVCL=THETA(1) \times (\frac{WT}{70})^{THETA(2)} \times (\frac{AGE}{43})^{THETA(3)} \times (\frac{CRCL}{80})^{THETA(4)}
+$$
+
+-   $THETA(1)$ is the typical CL for a reference subject with 70kg WT, 43yo AGE with a CRCL of 80mL/min.
+-   If a covariate isn’t important, the power will be driven toward zero (null value) with high uncertainty (i.e., wide confidence interval).
+
+## FFEM Inference example: forest plot
+
+![](./pics/forest-plot.png)
+
+## Pros and Cons of selection methods[^5]
+
+[^5]: Niclas Jonsson and Joakim Nyberg. *ACoP*. 2025.
+
+-   Pros:
+    -   Widely used.
+    -   Easily performed
+    -   Freely available in open-source programs (e.g., PsN).
+-   Cons:
+    -   Statistical significance $\neq$ clinical relevance.
+    -   Statistical insignificance $\neq$ clinical irrelevance.
+    -   Potential for selection bias.
+    -   Selected covariates based on current data.
+    -   Problematic inference due to multiple testing (arbitrary P value cut-off).
+    -   Long run-times (i.e., computationally expansive).
+
+## Pros and Cons of Pre-defined methods[^6]
+
+[^6]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
+
+::: columns
+::: {.column width="50%"}
+-   Pros:
+    -   Addresses the clinical or mechanistic importance of covariates.
+    -   Provide some explanation for the apparent absence of an covariate effect. For example:
+        -   True lack of an effect
+            -   Effect size small with narrow confidence intervals.
+        -   Lack of information about the effect
+            -   Wide confidence intervals regardless of effect size.
+    -   Less expansive computationally.
+    -   Answer clinically relevant questions using simulations with clinically relevant covariates.
+:::
+
+::: {.column width="50%"}
+-   Cons:
+    -   Subjective: expert opinions
+    -   Sometimes not clear about the clinical relevance of covariates
+        -   Microbiome impact on PK?
+    -   Extra caution for data reduction before covariate modeling: VIF analysis
+    -   More extensive model evaluations:
+        -   Convergence and successful covariance step?
+        -   Does the current model adequately characterize the data?
+        -   Any remaining trend for covariate-parameter relationship?
+:::
+:::

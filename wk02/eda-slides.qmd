@@ -1,0 +1,16 @@
+---
+title: "Exploratory Data Analysis"
+format: revealjs
+---
+
+
+# EDA
+
+- Exploratory 
+- Data 
+- Analysis
+
+
+
+
+

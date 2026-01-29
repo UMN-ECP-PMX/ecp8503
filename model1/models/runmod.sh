@@ -14,4 +14,4 @@ ulimit -l unlimited
 
 module load nonmem/750-rocky8
 
-execute mod1.ctl -nm_output=xml,ext,phi
+execute mod1.ctl -nm_output=xml,ext,phi,cov,cor,coi,shk

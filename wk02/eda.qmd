@@ -297,6 +297,7 @@ ggplot(cmin) +
 ## What about continuous?
 
 ```{r}
+#| message: false
 ggplot(cmin, aes(x = EGFR, y = DV)) + 
   geom_point() + 
   geom_smooth()
@@ -306,6 +307,7 @@ ggplot(cmin, aes(x = EGFR, y = DV)) +
 ```{r}
 #| fig-width: 7
 #| fig-height: 7
+#| message: false
 xx <- axis_col_labs(spec, vars(EGFR, ALB, WT, AGE))
 
 p <- cont_cont(
@@ -315,7 +317,7 @@ p <- cont_cont(
   ys = list(limits = c(0, NA))
 ) 
 
-p <- lapply(p, \(x) x + geom_smooth(se = FALSE, color = "blue3"))
+p <- lapply(p, layer_s)
 
 pm_grid(p) + plot_layout(axes = "collect")
 ```

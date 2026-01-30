@@ -35,7 +35,7 @@ head(ex)
 ```
 
 ```{r}
-pc <- as.data.frame(pharmaversestdm::
+pc <- as.data.frame(pharmaversesdtm::pc)
 ```
 
 ```{r}

@@ -158,10 +158,5 @@ If you don't have one, make it.
 
 [https://graphicsprinciples.github.io/](https://graphicsprinciples.github.io/)
 
-
-
-
-
-
-
+[Cheat sheet](https://github.com/GraphicsPrinciples/CheatSheet/blob/master/NVSCheatSheet.pdf)
 

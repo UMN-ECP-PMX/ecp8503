@@ -1,0 +1,494 @@
+---
+title: "Covariate modeling"
+author: "Shen Cheng"
+date: today
+format: 
+  revealjs: 
+    smaller: true
+    scrollable: true
+    embed-resources: true
+editor: visual
+execute:
+  enabled: true
+---
+
+# Model development workflow
+
+![](./pics/mod-dev-tree.png){fig-align="center"}
+
+## Covariate modeling
+
+-   When: Ideally after establishing the base model.
+-   Why: Help us understand which patient- or drug-specific characteristics are important determinants of PK parameters.
+    -   Mechanistic understanding:
+        -   Impact of disease type on CL.
+        -   Drug-drug interactions.
+    -   Controlling PK variability:
+        -   Dose selection for a special population (e.g., obese patients).
+        -   Dosing interval adjustment for extended release formulation.
+-   How: Specify a mathematical relationship between a PK parameter and covariates.
+    -   Usually requires adding parameters (mostly THETAs) in the model.
+
+## Continuous covariates
+
+-   Example: Body weight (WT) on CL
+    -   Linear:
+        -   `CL=THETA(1)*(1+THETA(2)*(WT-70))`
+    -   Piece-wise (hockey-stick) linear:
+        -   `IF(WT.LE.50) CL=THETA(1)*(1+THETA(2)*(WT-70))`
+        -   `IF(WT.GT.50) CL=THETA(1)*(1+THETA(3)*(WT-70))`
+    -   Exponential:
+        -   `CL=THETA(1)*EXP(THETA(2)*(WT-70))`
+    -   Power:
+        -   `CL=THETA(1)*(WT/70)**THETA(2)`
+-   Centering: in all of the above case, when WT=70, model collapse to `CL=THETA(1)`
+    -   Interpretation of `THETA(1)`: Typical CL for a subject with 70 kg body weight.
+    -   If replacing 70 with 60, for example, the interpretation of `THETA(1)` changes to "typical CL for a subject with 60 kg body weight", with no impact on model fittings.
+
+## Categorical covariates
+
+-   Example: Sex (Male=1; Female=0)
+    -   Linear:
+        -   `CL=THETA(1)`
+        -   `IF(SEX.EQ.1) CL=THETA(1)*(1+THETA(2))`
+
+## Covariate modeling approaches
+
+::: columns
+::: {.column width="50%"}
+Selection methods:
+
+-   Use the observed data to identify covariates based on **statistical significance**
+
+-   Examples:
+
+    -   Step-wise covariate modeling (SCM), or similar methods (e.g., COSSAC, SAMBA, etc).
+
+    -   Machine learning methods: LASSO, tree-based methods, etc.
+:::
+
+::: {.column width="50%"}
+Pre-defined methods:
+
+-   Pre-define covariates of interest before looking at the data.
+
+-   Adding covariate based on
+
+    -   **Clinical relevance**: Adding a transporter effect on CL based on mechanistic understanding despite small effect size.
+
+    -   **Regulartory interest**: Adding Asian population effect as covariate to support a PMDA submission.
+
+-   Ignoring statistical significance during modeling.
+
+-   Model inference relies on post-modeling simulations (e.g., forest plots).
+
+-   Examples:
+
+    -   Full-fixed effect modeling (FFEM)
+
+    -   Full random effect modeling (FREM)
+:::
+:::
+
+## Covariate modeling approaches
+
+-   Active area of interest.
+-   No single method is universally accepted as the "gold-standard".
+-   Choice of method depends on modeling objectives and context (i.e., fit-for-purpose)
+
+## Covariate examinations: **BEFORE** you start covariate modeling
+
+-   Know you covariates
+    -   Missing values?
+        -   No missing values-Perfect!
+        -   Small proportion (5%-10%):
+            -   Impute with median/mode.
+            -   Multiple imputation with chain equations (MICEs).
+        -   Large proportion (e.g., 30%)
+            -   Treat "missing" as a separate category.
+    -   Range and distribution of continuous covariates (e.g., body weight).
+        -   Distribution wide enough?
+    -   Count in each category of categorical covariates (e.g., sex)
+        -   Imbalance across category? Male:Female=20:1
+
+## Data reduction: **BEFORE** you start covariate modeling
+
+-   Examine covariate distributions for correlation/colinearity
+    -   Select covariates carrying unique information (relatively independent).
+    -   Rule of thumb: be cautious when $R^2>0.3$.
+-   Exclude or combine covariates carrying repetitive information.
+    -   WT, HT, BSA and BMI are highly correlated. If one included as a covariate, others may not need to be included.
+    -   BLACK (No=0, Yes=1), WHITE (No=0, Yes=1) and ASIAN (No=0, Yes=1). May lump into one covariate (BLACK=1, WHITE=2, ASIAN=3, OTHER=4).
+
+## Other consideration points
+
+-   Was the study designed to estimate a covariate effect?
+    -   SNP impact on CL.
+-   Inclusion criteria of a clinical study may impact the choice of covariates.
+    -   A study enroll only female patients (sex may be difficult to be explored as a covariate).
+-   Prior knowledge (very subjective).
+    -   Eye colors on CL?
+-   Clinical interest of covariates
+
+## Selection methods-(SCM)
+
+::: columns
+::: {.column width="70%"}
+![](./pics/scm.png)
+:::
+
+::: {.column width="30%"}
+-   Forward selection (univariate)
+    -   Base model -\> Add one covariate -\> Significantly better? -\> Yes, selected
+    -   Base model -\> Add another covariate -\> Significantly better? -\> No, not selected
+    -   ...
+-   Backward Elimination
+    -   Full model[^1] -\> remove one covariate -\> significantly worse?[^2] -\> Yes, selected
+    -   Full model -\> remove another covariate -\> significantly worse? -\> No, not selected
+    -   ...
+-   How to test significance?
+    -   Likelihood Ratio Test (LRT) for **nesting** models
+:::
+:::
+
+[^1]: Full model: the model include all covariates screened in univariate forward selection.
+
+[^2]: P-values during backward elimination are often stricter.
+
+## Nesting example
+
+-   Model 1:
+
+``` bash
+TVCL = THETA(1)
+```
+
+-   Model 2:
+
+``` bash
+TVCL = THETA(1)*(WT/70)**THETA(2)
+```
+
+-   If `WT/70` equals 1, then `(WT/70)**THETA(2)` equals 1, resulting in `TVCL = THETA(1)`.
+-   So Model 1 is nested within Model 2.
+
+## Another nesting example
+
+-   Model 1:
+
+``` bash
+TVCL = THETA(1)
+```
+
+-   Model 2:
+
+``` bash
+    TVCL = THETA(1)
+    IF(SEX.EQ.0) TVCL = TVCL * THETA(2)
+```
+
+-   With `THETA(2)` fixed to 1.0 (it’s null value)
+    -   `TVCL = THETA(1)` (if male)
+    -   `TVCL = THETA(1)` \* 1 (if female)
+-   No predictive difference between males and females when `THETA(2)` is set to its null value
+-   Smaller model (without SEX) is nested
+
+## Nesting?
+
+-   Model 1:
+
+``` bash
+TVCL = THETA(1)
+```
+
+-   Model 2:
+
+``` bash
+TVCL = THETA(1)*WT
+```
+
+-   No biological meaningful WT reference value to remove the effect of WT.
+-   Be careful. You can add COV effect without nesting.
+
+## Statistical significance vs. clinical relevance
+
+Example 1:
+
+``` bash
+TVCL = THETA(1)
+IF(SEX.EQ.0) TVCL = TVCL*THETA(2)
+```
+
+-   Fix `THETA(2)=1`, OFV=69.9
+-   Estimate `THETA(2)`, `THETA(2)`estimated as 1.1, OFV=62.1
+-   Clinical relevant?
+    -   Females have a 10% faster CL than males
+-   Statistical significant?
+    -   dOFV=69.9-62.1=7.8
+    -   Using a P value criteria (0.01) with 1 DF, if dOFV\>6.63, the COV is considered statistically significant.
+-   Statistically significant $\neq$ clinically relevant
+    -   Maybe you just happen to have a large sample size (n=3000).
+    -   Any small difference between subgroups can be detected.
+    -   Do we really care 10% faster CL clinically in females than males clinically.
+
+## Statistical significance vs. clinical relevance
+
+Example 2:
+
+``` bash
+TVCL = THETA(1)
+IF(SEX.EQ.0) TVCL = TVCL*THETA(2)
+```
+
+-   Fix `THETA(2)=1`, OFV=21.3
+-   Estimate `THETA(2)`, `THETA(2)`estimated as 0.4, OFV=20.1
+-   Clinical relevant?
+    -   Females have a 60% slower CL than males
+-   Statistical significant?
+    -   dOFV=21.3-20.1=1.2
+    -   Using a P value criteria (0.01) with 1 DF, only if dOFV\>6.63, the COV is considered statistically significant.
+-   Statistically insignificant $\neq$ clinically irrelevant
+    -   Maybe your sample size is too small (n=8).
+    -   Although COV effect is large (60%), the study is not sufficiently powered to detect it
+
+## Pre-defined methods: FFEM
+
+Full fixed-effect modeling (FFEM)\[\^3\] procedure:
+
+-   Develop a stable base model.
+
+-   **Thoughful** consideration given to potential covariate-parameter relationships.
+
+-   Full covariate model is constructed and checked for goodness-of-fit.
+
+-   Check point estimates and 95% confidence intervals (CIs).
+
+    -   Unimportant covariates are driven to 0 during estimation with wide CIs.
+
+-   If the inclusion of an unimportant covariate makes a model "unstable", consider exclude it from the model.
+
+    -   Model cannot converge
+
+    -   Covariance step fails
+
+    -   Very wide and unacceptable CIs (e.g., 2000% relative standard error)
+
+-   Make inference based on simulations using point estimates and 95% CIs.
+
+\[\^3\] Marc Gastonguay. *PAGE*. 2004.
+
+## **Thoughful** considerations:
+
+incorporate covariate effects in the model based on\[\^3\]:
+
+-   Scientific and clinical interest.
+-   Mechanistic plausibility.
+-   Prior knowledge of covariate effect (e.g., body size on CL).
+-   Exploratory graphics (e.g., trend of parameter vs. covariate relationships)
+-   Avoid simultaneous inclusion of correlated/collinear covariates.
+
+## Exploratory graphics implying covariate-parameter relationships
+
+![](./pics/eta-plot.png)
+
+## Cautious evaluating corrleation/collinrarity (more important for FFEM)
+
+```{r pairs_plot}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show the code"
+
+library(tidyverse)
+library(car)
+library(here)
+library(yspec)
+library(GGally)
+
+data <- readr::read_csv(
+  here::here("wk04", "data", "pk.csv"),
+  na = "."
+)
+
+# Spec
+spec <- yspec::load_spec(
+  here::here("wk04", "data", "pk.yml")
+)
+
+# Flags 
+flags <- pull_meta(spec, "flags")
+
+id <- data %>% distinct(ID, .keep_all = TRUE) %>% 
+  ys_add_factors(spec,flags$edaCatCov,.suffix = "")
+
+cov_all <- id %>% dplyr::select(DOSE, # dose was intented to be used as the outcome
+                                flags$edaCatCov, 
+                                flags$edaContCov) 
+
+# names(cov_all)
+
+# Examine correlation graphically
+pmplots::pairs_plot(id, flags$edaContCov)
+```
+
+## Cautious evaluating corrleation/collinrarity
+
+```{r boxplot}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| code-summary: "Show the code"
+
+pmplots::pm_grid(
+  pmplots::wrap_cont_cat(id, x=flags$edaCatCov, y="WT") %>% 
+    purrr::map(~ .x +pmplots::rot_x(angle=60)), 
+  ncol = 3
+  )
+
+```
+
+## Variance inflation factor (VIF) for multicollinearity assessment
+
+-   A metric used in multiple regression to assess correlation among predictors (independent variables).
+-   Measures how much the variance of an estimated regression coefficient is increased due to collinearity.
+
+For a covariate with 1 degree of freedom ($df_i$):
+
+$$
+VIF_i = \frac{1}{1-R_i^2}
+$$
+
+For a general covariate with $\geq1$ degree of freedom ($df_i$)[^3]:
+
+[^3]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
+
+$$
+GVIF_i = \frac{det(V_{jj})}{det(V_{jj}^*)} \\
+aGVIF=GVIF^{1/(2\times df_i)}
+$$
+
+-   Provide a method to globally pre-screen covariate collinearity, include both continuous and categorical covariates, before NLME covariate modeling.
+
+## Variance inflation factor (VIF) criteria
+
+$$
+VIF_i = \frac{1}{1-R_i^2}
+$$
+
+-   VIF=1: no collinearity ($R_i^2=0$)
+-   VIF=2: mild-moderate collinearity ($R_i^2=0.5$)
+-   VIF=5: moderate-high collinearity ($R_i^2=0.8$)
+-   VIF=10: high collinearity ($R_i^2=0.9$)
+-   Usually target VIF\<2, ideally VIF\<1.5.
+
+## Variance inflation factor (VIF) implementations
+
+::: columns
+::: {.column width="50%"}
+```{r vif_full}
+#| echo: true
+
+# Fit full model
+mod_full <- glm(DOSE ~ ., data = cov_all, family = "gaussian")
+
+# Extract full model VIF
+vif_full <- car::vif(mod_full)
+vif_full
+```
+:::
+
+::: {.column width="50%"}
+```{r vif_reduce}
+#| echo: true
+
+# Fit reduced model
+mod_reduce <- glm(DOSE ~ ., 
+                  data = cov_all %>% dplyr::select(-ALB, # correlates with CP
+                                                   -RF,  # correlates with EGFR
+                                                   -STUDY), # correlates with multiple covariates
+            family = "gaussian")
+
+# Extract reduced model VIF
+vif_reduce <- car::vif(mod_reduce)
+vif_reduce
+
+```
+:::
+:::
+
+## Construct FFEM[^4]
+
+[^4]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
+
+$$
+TVP = \theta_n \times \prod_{1}^{m} (\frac{COV_{mi}}{ref_m})^{\theta_(m+n)}\times \prod_{1}^{p}\theta_{p+m+n}^{COV_{pi}}
+$$
+
+-   $TVP$: typical value of a model parameter.
+-   $COV_{mi}$: $m^{th}$ individual continuous covariate with $ref_m$ as the reference value.
+-   $COV_{pi}$: $p^{th}$ individual categorical covariate (e.g., binary 0 or 1).
+-   $\theta_n$: estimated parameter describing $TVP$ for an individual with
+    -   $COV_{mi} =ref_{m}$
+    -   $COV_{pi} = 0$
+-   $\theta_{m+n}$ and $\theta_{p+m+n}$: estimated parameters describing the magnitude of the covariate-parameter relationship.
+
+## Construct FFEM example
+
+$$
+TVCL=THETA(1) \times (\frac{WT}{70})^{THETA(2)} \times (\frac{AGE}{43})^{THETA(3)} \times (\frac{CRCL}{80})^{THETA(4)}
+$$
+
+-   $THETA(1)$ is the typical CL for a reference subject with 70kg WT, 43yo AGE with a CRCL of 80mL/min.
+-   If a covariate isn’t important, the power will be driven toward zero (null value) with high uncertainty (i.e., wide confidence interval).
+
+## FFEM Inference example: forest plot
+
+![](./pics/forest-plot.png)
+
+## Pros and Cons of selection methods[^5]
+
+[^5]: Niclas Jonsson and Joakim Nyberg. *ACoP*. 2025.
+
+-   Pros:
+    -   Widely used.
+    -   Easily performed
+    -   Freely available in open-source programs (e.g., PsN).
+-   Cons:
+    -   Statistical significance $\neq$ clinical relevance.
+    -   Statistical insignificance $\neq$ clinical irrelevance.
+    -   Potential for selection bias.
+    -   Selected covariates based on current data.
+    -   Problematic inference due to multiple testing (arbitrary P value cut-off).
+    -   Long run-times (i.e., computationally expansive).
+
+## Pros and Cons of Pre-defined methods[^6]
+
+[^6]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
+
+::: columns
+::: {.column width="50%"}
+-   Pros:
+    -   Addresses the clinical or mechanistic importance of covariates.
+    -   Provide some explanation for the apparent absence of an covariate effect. For example:
+        -   True lack of an effect
+            -   Effect size small with narrow confidence intervals.
+        -   Lack of information about the effect
+            -   Wide confidence intervals regardless of effect size.
+    -   Less expansive computationally.
+    -   Answer clinically relevant questions using simulations with clinically relevant covariates.
+:::
+
+::: {.column width="50%"}
+-   Cons:
+    -   Subjective: expert opinions
+    -   Sometimes not clear about the clinical relevance of covariates
+        -   Microbiome impact on PK?
+    -   Extra caution for data reduction before covariate modeling: VIF analysis
+    -   More extensive model evaluations:
+        -   Convergence and successful covariance step?
+        -   Does the current model adequately characterize the data?
+        -   Any remaining trend for covariate-parameter relationship?
+:::
+:::

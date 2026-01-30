@@ -79,8 +79,7 @@ Assuming you have taken introductory level population PK course (e.g., ECP8502):
 
         -   01/30/2026-05/08/2026, 7-145 Weaver-Densford Hall (WDH)
 
-    -   Zoom option:
-        [https://umn.zoom.us/j/95554897171?pwd=ChzR8XR5QwwavyN8donwM7Workocz2.1&jst=2](https://www.google.com/url?q=https://umn.zoom.us/j/95554897171?pwd%3DChzR8XR5QwwavyN8donwM7Workocz2.1%26jst%3D2&sa=D&source=calendar&ust=1768017966782693&usg=AOvVaw03QWbf_vey9zf9x3cG3J4K)
+    -   Zoom option: [https://umn.zoom.us/j/95554897171?pwd=ChzR8XR5QwwavyN8donwM7Workocz2.1&jst=2](https://www.google.com/url?q=https://umn.zoom.us/j/95554897171?pwd%3DChzR8XR5QwwavyN8donwM7Workocz2.1%26jst%3D2&sa=D&source=calendar&ust=1768017966782693&usg=AOvVaw03QWbf_vey9zf9x3cG3J4K)
 
 ## Grading
 
@@ -130,12 +129,42 @@ Assuming you have taken introductory level population PK course (e.g., ECP8502):
 
 ## SSH
 
--   Follow the
-    [tutorial](https://msi.umn.edu/our-resources/knowledge-base/interactive-connections-faqs/how-do-i-setup-ssh-keys)
-    specified by MSI to setup SSH key in your local computer.
+-   Follow the [tutorial](https://msi.umn.edu/our-resources/knowledge-base/interactive-connections-faqs/how-do-i-setup-ssh-keys) specified by MSI to setup SSH key in your local computer.
     -   **Steps 1 and 2 are required**.
-    -   Step 3 (SSH agent activation step) is optional, and may be a little
-        different on Windows
+    -   Create `~/.ssh/config` locally.
+        -   Mac user:
+
+            -   `cd ~/.ssh`
+            -   `ls`
+            -   `touch ~/.ssh/config`
+            -   Open config, copy and paste the following scripts. Replace `your.msi.username` with your X500 and save it.
+
+            ``` bash
+            Host agate.msi.umn.edu
+            HostName agate.msi.umn.edu
+            User your.msi.username
+            IdentityFile ~/.ssh/id_rsa
+            ```
+
+        -   Windows user (required):
+
+            -   `cd ~/.ssh`
+            -   `ls`
+            -   `notepad ~/.ssh/config`
+            -   Open config, copy and paste the following scripts. Replace `your.msi.username` with your X500 and save it.
+
+            ``` bash
+            Host agate.msi.umn.edu
+            User your.msi.username
+            IdentityFile ~/.ssh/id_rsa
+            IdentitiesOnly yes
+            AddKeysToAgent yes
+            ```
+
+            -   In terminal, type `mv config.txt config`
+            -   If you do `ssh agate.msi.umn.edu`, it should ask you for passphrase now instead of password!
+            
+    -   Step 3 (SSH agent activation step) is optional, and may be a little different on Windows
         -   Open PowerShell on Windows:
         -   Run commands:
             -   `Get-Service ssh-agent`
@@ -143,21 +172,6 @@ Assuming you have taken introductory level population PK course (e.g., ECP8502):
             -   `Set-Service ssh-agent -StartupType Automatic`
             -   `ssh-add $env:USERPROFILE\.ssh\id_rsa`
             -   `ssh-add -l`
--   Create `~/.ssh/config` locally (optional).
-    -   `cd ~/.ssh`
-        -   `ls`
-    -   `touch ~/.ssh/config`
-        -   On windows `touch` won't work, `notepad ~/.ssh/config` should be
-            used instead.
-    -   Open config, copy and paste the following scripts. Replace
-        `your.msi.username` with your X500 and save it.
-
-``` bash
-Host agate.msi.umn.edu
-HostName agate.msi.umn.edu
-User your.msi.username
-IdentityFile ~/.ssh/id_rsa
-```
 
 ## Github
 
@@ -178,8 +192,7 @@ IdentityFile ~/.ssh/id_rsa
 
 ## Finch Studio
 
--   Download Finch Studio:
-    <https://docs.finchstudio.io/installation/#installation-files>
+-   Download Finch Studio: <https://docs.finchstudio.io/installation/#installation-files>
 
 -   Activate Finch Studio license
 
@@ -192,13 +205,10 @@ IdentityFile ~/.ssh/id_rsa
 ## Integrate Finch Studio with MSI
 
 -   Connect to MSI through [Open Ondemand](http://ood.msi.umn.edu/).
--   Create a folder named `ecp8503/model1` in home directory: used to link local
-    Finch Studio.
--   Open Finch Studio: navigate to `CONSOLE` -\> `Remote` -\>
-    `Open SSH/SFTP Remote Connection`.
+-   Create a folder named `ecp8503/model1` in home directory: used to link local Finch Studio.
+-   Open Finch Studio: navigate to `CONSOLE` -\> `Remote` -\> `Open SSH/SFTP Remote Connection`.
     -   First time set up, click `Add new connection`.
-    -   Non-first time, directly click connect unless a new connection is
-        needed.
+    -   Non-first time, directly click connect unless a new connection is needed.
 
 ## Integrate Finch Studio with MSI: Add new connections
 
@@ -214,20 +224,14 @@ IdentityFile ~/.ssh/id_rsa
     -   `cheng423` (This is mine!)
 -   Host: MSI host
     -   `agate.msi.umn.edu`
--   Port: 22 as the default SSH port.
-    [Story](https://www.ssh.com/academy/ssh/port) behind it if you are
-    interested…
--   Private key: Copy and paste the private key in `~/.ssh/id_rsa` (NOT
-    `~/.ssh/id_rsa.pub`).
--   Passphrase is recommended. If you have configured a SSH passphrase, enabling
-    the passphrase option as shown below and enter your passphrase at the
-    bottom.
+-   Port: 22 as the default SSH port. [Story](https://www.ssh.com/academy/ssh/port) behind it if you are interested…
+-   Private key: Copy and paste the private key in `~/.ssh/id_rsa` (NOT `~/.ssh/id_rsa.pub`).
+-   Passphrase is recommended. If you have configured a SSH passphrase, enabling the passphrase option as shown below and enter your passphrase at the bottom.
 
 ## Integrate Finch Studio with MSI: Save and Connect
 
 -   Two-factor authentication
--   I generally select option #1, authentication through Duo Push... (Push two
-    times, unsure why)
+-   I generally select option #1, authentication through Duo Push... (Push two times, unsure why)
 
 ## Course environment overview III
 
@@ -235,8 +239,7 @@ IdentityFile ~/.ssh/id_rsa
 
 ## SLURM
 
--   Slurm MSI help guide:
-    <https://msi.umn.edu/our-resources/knowledge-base/slurm-job-submission-and-scheduling>
+-   Slurm MSI help guide: <https://msi.umn.edu/our-resources/knowledge-base/slurm-job-submission-and-scheduling>
 -   Job submission and scheduling
 -   Need to have a bash script set up in advance to interact with slurm
 
@@ -265,24 +268,16 @@ execute mod1.ctl -nm_output=xml,ext,phi
 ```
 
 -   `#SBATCH --mail-user=cheng423@umn.edu`: **PLEASE CHANGE TO YOUR EMAIL!**
--   `#SBATCH -L nonmem@slurmdb:1` specifies a `NONMEM` license. Currently, two
-    `NONMEM` licenses are available at MSI, you can specify either
-    `#SBATCH -L nonmem@slurmdb:1` or `#SBATCH -L nonmem@slurmdb:2`.
--   `#SBATCH -p msilarge` specifies partition of the job. Please refer to this.
-    [sheet](https://www.msi.umn.edu/partitions) to appropriately select the
-    partition that fits your job.
--   `#SBATCH --output=NONMEM.log` requests a NONMEM output log for trouble
-    shooting purpose.
--   `module load nonmem/750-rocky8` loads the `NONMEM` program module at MSI HPC
-    `agate`.
--   `execute mod1.ctl -nm_output=xml,ext` execute a model fitting through PsN,
-    request `xml` and `ext` output.
+-   `#SBATCH -L nonmem@slurmdb:1` specifies a `NONMEM` license. Currently, two `NONMEM` licenses are available at MSI, you can specify either `#SBATCH -L nonmem@slurmdb:1` or `#SBATCH -L nonmem@slurmdb:2`.
+-   `#SBATCH -p msilarge` specifies partition of the job. Please refer to this. [sheet](https://www.msi.umn.edu/partitions) to appropriately select the partition that fits your job.
+-   `#SBATCH --output=NONMEM.log` requests a NONMEM output log for trouble shooting purpose.
+-   `module load nonmem/750-rocky8` loads the `NONMEM` program module at MSI HPC `agate`.
+-   `execute mod1.ctl -nm_output=xml,ext` execute a model fitting through PsN, request `xml` and `ext` output.
 
 ## Running NONMEM through Finch Studio on MSI
 
 -   Copy `./model1/data` folder from local to remote.
--   Section 4 of my blog: [Use Finch Studio on
-    MSI](https://chengshen1992.github.io/posts/FinchStudio_msi/)
+-   Section 4 of my blog: [Use Finch Studio on MSI](https://chengshen1992.github.io/posts/FinchStudio_msi/)
 
 # Useful links
 
@@ -290,13 +285,10 @@ execute mod1.ctl -nm_output=xml,ext,phi
 
 -   Finch Studio website: <https://finchstudio.io/>
 
--   Finch Studio installation instructions:
-    <https://finchstudio.io/learn/setting-up-finch-studio%20copy>
+-   Finch Studio installation instructions: <https://finchstudio.io/learn/setting-up-finch-studio%20copy>
 
 -   PsN: <https://uupharmacometrics.github.io/PsN/>
 
--   Slurm:
-    <https://msi.umn.edu/our-resources/knowledge-base/slurm-job-submission-and-scheduling>
+-   Slurm: <https://msi.umn.edu/our-resources/knowledge-base/slurm-job-submission-and-scheduling>
 
--   Finch Studio Directory Structure:
-    <https://docs.finchstudio.io/installation/getting-started.html#directory-structure>
+-   Finch Studio Directory Structure: <https://docs.finchstudio.io/installation/getting-started.html#directory-structure>

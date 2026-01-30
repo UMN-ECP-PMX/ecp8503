@@ -1,0 +1,64 @@
+SETUP__: 
+  description: Demothizine PK analysis
+C:
+  short: Commented record
+NUM:
+  short: Record number
+ID:
+  short: Subject ID
+TIME:
+  short: Time after first dose
+  unit: h
+AMT:
+  short: Dose amount
+  unit: mg
+  values: [0,50,100]
+CMT: 
+  short: Compartment
+  values: [1,2]
+EVID: 
+  short: Event ID
+  values: [0,1]
+DV: 
+  short: Demothizine concentration
+  unit: ng/mL
+BLQ: 
+  short: Below limit of quantitation
+  values: [0,1]
+LLOQ:
+  short: Lower limit of quantitation
+AGE: 
+  short: Age
+  unit: years
+SEX:
+  short: Sex
+  values: [1, 2]
+  decode: [Male, Female]
+ALB: 
+  short: Albumin
+  unit: mg/dL
+SCR:
+  short: Serum creatinine
+  unit: mg/dL
+WT: 
+  short: Weight
+  unit: kg
+HT: 
+  short: Height
+  unit: cm
+GENO:
+  short: Genotype
+  values: [0, 1]
+  decode: [Normal metabolizer, Poor metabolizer]
+BSA:
+  short: Body surface area
+  unit: m2
+EGFR: 
+  short: Estimated GFR
+  short.plot: eGFR
+  unit: ml/min/1.73 m2
+DOSE: 
+  short: Demothizine dose group
+  unit: mg
+  values: [50, 100]
+  decode: [50 mg, 100 mg]

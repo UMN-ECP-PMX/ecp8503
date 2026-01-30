@@ -1,0 +1,167 @@
+---
+title: "Data Set and Exploratory Data Analysis"
+format: 
+  revealjs: 
+    embed-resources: true
+    css: assets/styles.css
+# execute:
+#   enabled: false
+---
+
+# Data assembly considerations
+
+- Source data
+  - CDISC or clinical
+- Derived data - analysis ready
+  - Script and document data wrangling to generate analysis 
+- Set yourself up for success
+  - Think about what you are likely to need from your data set and program
+    that in at the start
+
+# Set yourself up for success
+
+For example: 
+  
+Dosage forms: tablet, capsule, IV
+
+Make one column with   
+   - FORM: 1 = tablet, 2 = capsule, 3 = IV
+
+Make another column with   
+   - ORAL: 1 = tablet or capsule, 0 = IV
+
+# Another example
+
+- You have eGFR as a continuous covariate (units: ml/min/1.73m2)
+- Also carry a column that groups each eGFR into a renal function
+group
+
+Renal impairment group   
+    - 0 = None: >90    
+    - 1 = Mild impairment: 60 to 89  
+    - 2 = Moderate impairment: 30 to 59  
+    - 3 = Severe impairment: 15 to 29  
+
+# Another example
+You might have a column called `ARM` with   
+    - 150 mg IV x1  
+    - 150 mg PO Q2W  
+    - 300 mg PO Q2W  
+    - 500 mg PO Q4W  
+
+Make another column just saying the `DOSE`  
+    - 150 mg, 300 mg, 500 mg
+
+Give well-formatted labels to all coded variables  
+    - 1 = Normal metabolizer, 0 = Poor metabolizer
+
+# CDISC data
+
+```{r}
+#| echo: false
+pc <- as.data.frame(pharmaversesdtm::pc)
+pc <- subset(pc, PCORRES != "<BLQ")
+head(pc, n = 4)
+```
+
+
+# Analysis ready data
+
+```{r}
+#| echo: false
+dd <- data.table::fread(here::here("model1/data/nmdat1.csv"))
+head(dd)
+```
+
+
+
+# EDA
+
+- Exploratory 
+- Data 
+- Analysis
+
+::: {.fragment}
+::: {.callout-tip}
+## Modeling is done with a purpose
+1. Do we have data to support our model's purpose?
+2. Are there any problems in our data that would interfere with our 
+modeling purpose?
+:::
+:::
+
+
+# Two phases of EDA
+
+1. Learn about the data  
+    - What / who is there?
+    - Are there problems in the data?  
+    - Informal outputs
+2. Develop outputs to support your modeling
+    - Poor metabolizers have higher exposure than normal metabolizers
+    - Exposure is higher in men than women
+    - Well-formatted outputs
+    
+# Read the protocol
+
+![](assets/protocol.png){fig-align="center"}
+
+
+
+# Make sure you have a data specification document
+
+If you don't have one, make it. 
+
+![](assets/definitions.png){fig-align="center"}
+
+# Data inventory (PK)
+
+- How much data do we have?
+    - Subjects
+    - Quantifiable observations
+    - BLQ observations
+- How does this inventory vary by 
+    - Dose regimens
+    - Covariate levels
+
+# Who is in our data set?
+
+- Categorical covariates
+    - Levels (e.g. Sex: Male, Female)
+    - Count / percent 
+
+- Continuous covariates
+    - Usually at baseline
+    - Median / mean
+    - SD
+    - Range
+
+- Continuous covariates by categorical
+
+# Concentration time profiles
+
+- Concentration versus time
+- Concentration versus time after dose
+- Plots stratified by meaningful covariates
+
+::: {.fragment}
+::: {.callout-tip}
+## Ask
+1. Are we seeing concentrations in the expected range?
+2. Are we seeing concentrations collected in the expected time range?
+3. What models might this data support?
+4. Are these models adquate to answer our questions?
+:::
+:::
+
+# Visualization 
+
+[https://graphicsprinciples.github.io/](https://graphicsprinciples.github.io/)
+
+
+
+
+
+
+
+

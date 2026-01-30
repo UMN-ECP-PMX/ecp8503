@@ -1,0 +1,52 @@
+---
+title: "CDISC data sets"
+format: html
+---
+
+
+```{r}
+#| message: false
+library(dplyr)
+library(admiral)
+```
+
+# Might need to install these packages
+
+```{r}
+# install.packages("admiral")
+# remotes::install_github("pharmaverse/pharmaversesdtm", ref = "main")
+```
+
+
+# adsl
+
+```{r}
+sl <- as.data.frame(admiral::admiral_adsl)
+
+head(sl)
+```
+
+# ex
+
+```{r}
+ex <- as.data.frame(admiral::ex_single)
+
+head(ex)
+```
+
+```{r}
+pc <- as.data.frame(pharmaversesdtm::pc)
+```
+
+```{r}
+ex <- as.data.frame(pharmaversesdtm::ex)
+head(ex)
+str(ex)
+```
+
+```{r}
+pc <- as.data.frame(pharmaversesdtm::pc)
+head(pc)
+
+str(pc$PCORRES)
+```

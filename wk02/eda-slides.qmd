@@ -1,6 +1,11 @@
 ---
 title: "Exploratory Data Analysis"
-format: revealjs
+format: 
+  revealjs: 
+    smaller: true
+    embed-resources: true
+execute:
+  enabled: false
 ---
 
 
@@ -10,7 +15,61 @@ format: revealjs
 - Data 
 - Analysis
 
+::: {.fragment}
+::: {.callout-tip}
+## Modeling is done with a purpose
+1. Do we have data to support our model's purpose?
+2. Are there any problems in our data that would interfere with our 
+modeling purpose?
+:::
+:::
 
 
+# Two phases of EDA
 
+1. Learn about the data  
+    - What / who is there?
+    - Are there problems in the data?  
+2. Develop outputs to support your modeling
+    - Poor metabolizers have higher exposure than normal metabolizers
+    - Exposure is higher in men than women
 
+# Data inventory (PK)
+
+- How many 
+    - Subjects
+    - Quantifiable observations
+    - BLQ observations
+- How does this inventory vary by 
+    - Dose regimens
+    - Covariate levels
+
+# Covariate summaries
+
+- Categorical covariates
+    - Levels 
+    - Count / percent 
+
+- Continuous covariates
+    - Usually at baseline
+    - Median / mean
+    - SD
+    - Range
+
+- Continuous covariates by categorical
+
+# Concentration time profiles
+
+- Concentration versus time
+- Concentration versus time after dose
+- Plots stratified by meaningful covariates
+
+::: {.fragment}
+::: {.callout-tip}
+## Ask
+1. Are we seeing concentrations in the expected range
+2. Are we seeing concentrations collected in the expected time range
+3. What models might this data support?
+4. Are these models adquate to answer our questions?
+:::
+:::

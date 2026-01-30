@@ -12,10 +12,13 @@ TIME:
 AMT:
   short: Dose amount
   unit: mg
+  values: [0,50,100]
 CMT: 
   short: Compartment
+  values: [1,2]
 EVID: 
   short: Event ID
+  values: [0,1]
 DV: 
   short: Demothizine concentration
   unit: ng/mL
@@ -38,7 +41,7 @@ SCR:
   short: Serum creatinine
   unit: mg/dL
 WT: 
-  short: Height
+  short: Weight
   unit: kg
 HT: 
   short: Height
@@ -59,4 +62,3 @@ DOSE:
   unit: mg
   values: [50, 100]
   decode: [50 mg, 100 mg]
-

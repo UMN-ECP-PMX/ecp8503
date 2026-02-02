@@ -1,0 +1,350 @@
+---
+title: "SIR NONMEM Implementations"
+author: "Shen Cheng"
+date: today
+format: 
+  revealjs: 
+    slide-number: true
+    smaller: true
+    scrollable: true
+    embed-resources: true
+editor: visual
+execute:
+  enabled: false
+---
+
+# 1. SIR Implementation in NONMEM
+
+## Step 1: Sampling {.smaller}
+
+-   Final model
+
+`...`
+
+`$EST METHOD=1 INTERACTION POSTHOC NOABORT PRINT=1`
+
+`MAXEVAL=9999 SIGL=9 NSIG=3 MSFO=./001b.MSF`
+
+`$COV UNCOND MATRIX=S PRINT=E`
+
+`...`
+
+## Step 1: Sampling {.smaller}
+
+-   SIR model
+
+`...`
+
+`$CHAIN FILE=../001b/001b.ext NSAMPLE=0 ISAMPLE=-1000000000`
+
+`$RCOV FILE=../001b/001b.cov`
+
+`$ETAS FILE=../001b/001b.phi`
+
+`$EST METHOD=1 INTERACTION POSTHOC NOABORT PRINT=1`
+
+`MAXEVAL=9999 SIGL=9 NSIG=3 FNLETA=2`
+
+`$COV PRINT=E` `SIRSAMPLE=5000 FILE=./001b-sir.ext`
+
+`...`
+
+*Reference: NONMEM 7.5.0 userguide*
+
+## Step 1: Sampling (`$CHAIN`) {.smaller}
+
+`$CHAIN FILE=../001b/001b.ext NSAMPLE=0 ISAMPLE=-1000000000`
+
+-   `FILE` specify the `.ext` file imported
+-   `NSAMPLE=0` no sampling
+-   `ISAMPLE=-1000000000` takes the `ITERATION=-1000000000` record in `FILE`
+
+## Step 1: Sampling (`$RCOV`/`$RCOVI` and `$ETAS`/`$PHI`) {.smaller}
+
+`$RCOV FILE=../001b/001b.cov`\
+`$ETAS FILE=../001b/001b.phi`
+
+-   `$RCOV` provides covariance matrix (`.cov` file, either from `$COV` step or somewhere else)
+-   `$RCOVI` can be used instead of `$RCOV` with the input being the `.coi` file
+-   `$RCOV`/`$RCOVI` only implementable since NONMEM 7.5.0
+-   `$ETAS`(`$PHIS`) provides $\mathit{ETA_{i}}$
+
+## Step 1: Sampling (`$EST`) {.smaller}
+
+`$EST METHOD=1 INTERACTION POSTHOC NOABORT PRINT=1`
+
+`MAXEVAL=9999 SIGL=9 NSIG=3 FNLETA=2`
+
+-   `FNLETA=2` suppresses the execution of `$EST`, allows the use of imported estimates from `$CHAIN`, `$RCOV` and `$ETAS`
+
+## Step 1: Sampling (`$COV`) {.smaller}
+
+`$COV PRINT=E SIRSAMPLE=5000 FILE=./001b-sir.ext`
+
+-   `SIRSAMPLE=5000` specify the number of SIR sampling
+-   `FILE` specify the name output. If not specified, by default, it will append the SIR output to the `model_name.ext` as a second table
+
+## Step 2: Importance Ratio/Weight {.smaller}
+
+``` r
+read.table(file.path(modelDir, sirrunno, "001b-sir.ext")), skip = 1, header = TRUE) 
+```
+
+> |  ITERATION  |  THETA1  |  THETA2  | ... | OMEGA.6.6. |   OBJ    |    WEIGHT    |
+> |:-----------:|:--------:|:--------:|:---:|:----------:|:--------:|:------------:|
+> |      0      | -4.89991 | 0.838115 | ... |     0      | 42724.25 | 1.000000e+00 |
+> |      1      | -4.94797 | 0.823778 | ... |     0      | 42739.10 | 1.252805e+00 |
+> |      2      | -4.88234 | 0.873831 | ... |     0      | 42728.04 | 1.245718e+00 |
+> |      .      |    .     |    .     | ... |     .      |    .     |      .       |
+> |      .      |    .     |    .     | ... |     .      |    .     |      .       |
+> |      .      |    .     |    .     | ... |     .      |    .     |      .       |
+> |    5000     | -4.90715 | 0.744407 | ... |     0      | 42747.94 | 3.727524e+00 |
+> | -1000000000 | -4.89505 | 0.837854 | ... |     0      | 42732.60 | 1.239093e+00 |
+> |      .      |    .     |    .     | ... |     .      |    .     |      .       |
+
+## Step 3: Resampling (method 1)
+
+``` {.r code-line-numbers="|6-7|12-16"}
+sirsample0 <- read.table(file.path(modelDir, sirrunno, "001b-sir.ext")), 
+                         skip = 1, header = TRUE) 
+
+sirsample1 <- sirsample0 %>% filter(ITERATION > 0)
+
+# compute resample probability based on importance ratios (WEIGHT)
+sirsample1 <- sirsample1 %>% mutate(prob = WEIGHT/sum(WEIGHT, na.rm = TRUE)) 
+
+# resample
+M1 <- 1000
+
+withr::with_seed(seed = 0720, 
+                 sample_rows <- sample(x = sirsample1$ITERATION, 
+                                       size = M1, 
+                                       replace = TRUE, 
+                                       prob = sirsample1$prob))
+sirresample1 <- sirsample1[sample_rows, ]
+```
+
+-   Resampling in R, with probability calculated proportionally to the `WEIGHT`
+
+## Step 3: Resampling (method 2)
+
+``` {.r code-line-numbers="|3|4-6|7"}
+M2 <- 1000
+
+# `table_resample root.ext root_new.ext delimiter newsize SEED start end`
+system(glue('/opt/NONMEM/nm75/util/table_resample 
+            ./model/pk/001b-sir/001b-sir.ext      
+            ./model/pk/001b-sir/001b-sir-rs.ext   
+            s {M2} 0720'))                               
+
+sirresample2 <- read.table("./model/pk/001b-sir/001b-sir-rs.ext", 
+                           skip = 1, header = TRUE) %>% 
+                           filter(ITERATION > 0)
+```
+
+-   Resampling using NONMEM utility function
+    -   Postive `SEED`: sample with replacement
+    -   Negative `SEED`: sample without replacement
+    -   `SEED = 0`: expand samples, based on `WEIGHT` column
+
+<!-- ## Comparison between two methods -->
+
+<!-- ::::: columns -->
+
+<!-- ::: {.column width="50%"} -->
+
+<!-- ![](./pics/resample-dofv-comparison.png) -->
+
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+
+<!-- -   Method 1: resampling in R -->
+
+<!-- -   Method 2: resampling using NONMEM util -->
+
+<!-- -   Comparable results, should be able to use either one -->
+
+<!-- ::: -->
+
+<!-- ::::: -->
+
+# 2. SIR Diagnostics (dOFV plots)
+
+## dOFV plots {.smaller}
+
+-   Theoretical degree of freedom (DF) = number of parameter.
+-   DF of the proposal distrubution (sampling) higher than the theoretical one.
+-   DF of the final SIR distrubution (resampling) at / lower than the theoretical one.
+-   Estimated DF = mean of respective dOFV
+
+## dOFV plots {.smaller}
+
+-   What if the proposal distribution DF ([red line]{style="color:#F8766D"}) \< Theoretical DF?
+-   What if the final SIR distribution DF ([blue line]{style="color:#00bfc4"}) \> Theoretical DF?
+
+## Proposal distribution DF \< Theoretical DF {.smaller}
+
+-   Solution 1: adjust `SIRDF` in `$COV`
+
+`$COV PRINT=E SIRSAMPLE=5000 FILE=./001b-sir.ext`.
+
+`$COV PRINT=E SIRSAMPLE=5000` **`SIRDF=4`** `FILE=./001b-sir.ext`
+
+-   `SIRDF`: The proposal density is to be a t distribution with n degrees of freedom. Default is 0, a normal density. You may wish to utilize a t-distribution with SIRDF degrees of freedom, to provide heavy tail sampling
+
+<!-- ## `SIRDF` -->
+
+<!-- ::::: columns -->
+
+<!-- ::: {.column width="50%"} -->
+
+<!-- ![](./pics/sirdf-shape.png) -->
+
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+
+<!-- ![](./pics/sirdf-sens-dofv.png) -->
+
+<!-- ::: -->
+
+<!-- ::::: -->
+
+## Proposal distribution DF \< Theoretical DF {.smaller}
+
+-   Solution 2: adjust `IACCEPT` in `$COV`
+
+`$COV PRINT=E SIRSAMPLE=5000 FILE=./001b-sir.ext`.
+
+`$COV PRINT=E SIRSAMPLE=5000` **`IACCEPT=0.4`** `FILE=./001b-sir.ext`
+
+-   `IACCEPT`: With `IACCEPT=0.4`, for example, the proposal density variance is made to be greater than the original variance-covariance, and more sampling is done farther away from the center.
+
+<!-- ## `IACCEPT` -->
+
+<!-- ::::: columns -->
+
+<!-- ::: {.column width="50%"} -->
+
+<!-- ![](./pics/iaccept-shape.png) -->
+
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+
+<!-- ![](./pics/iaccept-sens-dofv.png) -->
+
+<!-- ::: -->
+
+<!-- ::::: -->
+
+<!-- ## Run times (`SIRDF` and `IACCEPT`) -->
+
+<!-- ::::: columns -->
+
+<!-- ::: {.column width="50%"} -->
+
+<!-- ![](./pics/sirdf-time.png) -->
+
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+
+<!-- ![](./pics/iaccept-time.png) -->
+
+<!-- ::: -->
+
+<!-- ::::: -->
+
+## Final SIR distribution DF \> Theoretical DF {.smaller}
+
+-   Solution: increase sampling to resampling ratio
+    -   typically want resample at least 1000 times (similar rationale as 1000 bootstrap)
+    -   can increase sampling times (`SIRSAMPLE`) to increase sampling to resampling ratio
+
+`$COV PRINT=E SIRSAMPLE=2500 FILE=./001b-sir.ext`
+
+`$COV PRINT=E SIRSAMPLE=5000 FILE=./001b-sir.ext`
+
+## Impact of sampling to resampling ratio {.smaller}
+
+-   The DF won't decrease monotonically as the increase of sampling to resampling ratio.
+-   Depends on the model, the lowest possible DF varies. But at least should be close to the theoretical Chi-square distribution with DF = number of estimated parameters in the model.
+
+<!-- ## Run times (`SIRSAMPLE`) -->
+
+<!-- ![](./pics/sirsample-time.png) -->
+
+# 3. Additional Diagnostics
+
+## Confidence interval plots
+
+::: columns
+::: {.column width="50%"}
+![](./pics/ci-plot.png)
+:::
+
+::: {.column width="50%"}
+-   Visualize parameter by parameter, the difference between SIR derived posterior distribution versus `$COV` derived distribution.
+-   Visualize which parameters are deviated from the normal distribution assumption.
+:::
+:::
+
+## Spatial trend plots {.smaller}
+
+::: columns
+::: {.column width="50%"}
+![](./pics/spatial-trend-plot.png)
+:::
+
+::: {.column width="50%"}
+-   Visualize, parameter by parameter,whether the proposal distribution differs from the true uncertainty.
+-   Horizontal trend: the proposal distribution is close to the true uncertainty.
+-   Bell-shaped trend: the proposal distribution is wider than the true distribution.
+-   U-shaped trend: the proposal distribution is narrower than the true distribution.
+-   Diagonal trend: the proposal distribution has a different (a)symmetry than the true distribution.
+:::
+:::
+
+## Temporal trend plots {.smaller}
+
+::: columns
+::: {.column width="50%"}
+![](./pics/temporal-trend-plot.png)
+:::
+
+::: {.column width="50%"}
+-   Whether sampling to resampling ratio was high enough to compensate for the differences between the proposal distribution and the true uncertainty for a particular parameter.
+-   Horizontal trend: sampling to resampling ratio was sufficient to compensate for potential differences between the proposal distribution and the true uncertainty.
+-   Downward diagonal trend: not enough good samples in the SIR procedure to fully correct the proposal uncertainty (i.e., sampling to resampling ratio was not sufficient)
+:::
+:::
+
+# 4. Summary {.smaller}
+
+-   SIR can be a useful tool to estimate the parameter uncertainties
+    -   when it is inappropriate to make distributional assumptions (i.e., non-normal).
+    -   Computationally less-expansive than bootstrap (although can also be time-consuming for complex model).
+
+## SIR Implementation in NONMEM {.smaller}
+
+-   NONMEM integrated functions to perform SIR sampling following the final model development.
+    -   `$CHAIN`, `$ROV`, `$ETAS` to import final model output.
+    -   `$EST` suppressing with `FNLETA=2`
+    -   `$COV` to perform SIR sampling
+-   SIR resampling can be performed either in R or using NONMEM util.
+-   Diagnostics: dOFV plots
+    -   Proposal distribution DF \< Theoretical DF
+        -   `SIRDF`: smaller `SIRDF` increase proposal distribution DF more
+        -   `IACCEPT`: smaller `IACCEPT` increase proposal distribution DF more
+    -   Final SIR distribution DF \> Theoretical DF
+        -   Increase the sampling to resampling ratio: increase `SIRSAMPLE`
+
+## Practical Suggestions {.smaller}
+
+-   Start with a small batch of sampling / resampling (e.g., 500/100) and check the diagnostics.
+    -   optimize the `SIRDF`, `IACCEPT`, `SIRSAMPLE` (sampling to resampling ratio) as needed.
+-   Perform final SIR using the optimized SIR condition.
+-   Compare the SIR derived confidence intervals to the `$COV` derived confidence intervals and visualize the **spatial trend plots** can be useful to check, parameter by parameter, whether the proposal distribution differs from the true uncertainty.
+-   **Temporal trend plot** can instruct, parameter by parameter, whether sampling to resampling ratio was high enough to compensate for the differences between the proposal distribution and the true uncertainty for a particular parameter.

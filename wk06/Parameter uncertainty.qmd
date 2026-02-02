@@ -1,0 +1,398 @@
+---
+title: "Parameter uncertainty"
+author: "Shen Cheng"
+date: today
+format: 
+  revealjs: 
+    slide-number: true
+    smaller: true
+    scrollable: true
+    embed-resources: true
+editor: visual
+execute:
+  enabled: false
+---
+
+# What is parameter uncertainty?
+
+## What is parameter uncertainty?
+
+-   How **confident** you are in your parameter estimates $(\theta, \Omega, \Sigma)$?
+-   Typical statistics:
+    -   Standard errors (SE).
+    -   Relative standard errors (RSE).
+    -   Confidence intervals (CI).
+-   Parameter estimates $(\theta, \Omega, \Sigma)$ are obtained with [uncertainty]{style="color:red"}
+    -   Parametric: Variance-covariance matrix (e.g., NONMEM .cov file).
+    -   Non-parametric:
+        -   Log-likelihood profiling (LLP)
+        -   Non-parametric bootstrap
+        -   Sampling-importance resampling (SIR)
+        -   Bayesian posterior distribution
+
+## Variability vs. uncertainty
+
+-   Both were commonly represented by probability distribution.
+
+-   Differ conceptually[^1]:
+
+    -   [Variability]{style="color:blue"}:
+
+        -   **Inherent difference** in the system.
+        -   Often **cannot** be reduced with more data.
+        -   Typically referring to $\Omega$ and $\Sigma$ estimates.
+
+    -   [Uncertainty]{style="color:red"}:
+
+        -   How **confident** we are in our estimates of the system.
+        -   Often **can** be reduced with more data
+        -   Typically refers to SE, RSE or CI of each parameter, including $\theta$, $\Omega$ and $\Sigma$.
+
+[^1]: Chuanpu Hu. *JPKPD*. 2022.
+
+## Variability vs. uncertainty
+
+![](./pics/param_tables.png){fig-align="center"}
+
+# Overview of methods
+
+## Methods to assess parameter uncertainty
+
+```{dot}
+
+digraph G {
+  graph [splines=true]
+  rankdir=LR
+
+  subgraph cluster_0 {
+    style=filled; 
+    color=lightgrey;
+    label="\\$EST METHOD=FOCE/SAEM/IMP"; 
+    node [style=filled,color=white]; 
+    "Distributional Assumption"->"\$COV";
+    "No Distributional Assumption"->"Non-Parametric Bootstrap (BS)"; 
+    "No Distributional Assumption"->"Log-Likelihood Profiling (LLP)"; 
+    "No Distributional Assumption"->"Sampling Importance Resampling (SIR)";
+  }
+  
+  subgraph cluster_1 {
+    style=filled; 
+    color=lightgrey; 
+    label = "\\$EST METHOD=BAYES/NUTS";
+    node [style=filled];
+    "Posterior Distribution"; 
+  }
+  
+  "Parameter Uncertainty" -> "Distributional Assumption";
+  "Parameter Uncertainty" -> "No Distributional Assumption"; 
+  "Parameter Uncertainty" -> "Posterior Distribution";
+
+  "Parameter Uncertainty" [shape=diamond];
+}
+
+```
+
+## Methods to assess parameter uncertainty
+
+-   METHOD=FOCE/SAEM/IMP
+    -   Distributional assumption
+        -   \$COV: assymptotic covariance matrix from covariance step.
+        -   Good approximation, may not be obtained even if the model is good (\$COV step failed)[^2].
+        -   Less realistic: always symmetrical (est $\pm$ 1.96\*se).
+    -   No distributional assumptions: Assymmetric, more realistic.
+-   METHOD=BAYES/NUTS:
+    -   Directly acquire posterior distribution with no distributional assumption.
+
+[^2]: Holford N. [Bootstrap and Confidence Interval](https://holford.fmhs.auckland.ac.nz/docs/bootstrap-and-confidence-intervals.pdf).
+
+## Methods to assess parameter uncertainty
+
+```{dot}
+
+digraph G {
+  graph [splines=true]
+  rankdir=LR
+
+  subgraph cluster_0 {
+    style=filled; 
+    color=lightgrey;
+    label="\\$EST METHOD=FOCE/SAEM/IMP"; 
+    node [style=filled,color=white]; 
+    "Distributional Assumption"->"\$COV";
+    "No Distributional Assumption"->"Non-Parametric Bootstrap (BS)"; 
+    "No Distributional Assumption"->"Log-Likelihood Profiling (LLP)"; 
+    "No Distributional Assumption"->"Sampling Importance Resampling (SIR)";
+  }
+  
+  subgraph cluster_1 {
+    style=filled; 
+    color=lightgrey; 
+    label = "\\$EST METHOD=BAYES/NUTS";
+    node [style=filled];
+    "Posterior Distribution"; 
+  }
+  
+  "Parameter Uncertainty" -> "Distributional Assumption";
+  "Parameter Uncertainty" -> "No Distributional Assumption"; 
+  "Parameter Uncertainty" -> "Posterior Distribution";
+
+  "Parameter Uncertainty" [shape=diamond];
+  "No Distributional Assumption" [fontname="Helvetica-Bold", penwidth=4, color=lightgreen]
+  "Non-Parametric Bootstrap (BS)" [fontname="Helvetica-Bold", penwidth=4, color=lightgreen]
+  "Log-Likelihood Profiling (LLP)" [fontname="Helvetica-Bold", penwidth=4, color=lightgreen]
+  "Sampling Importance Resampling (SIR)" [fontname="Helvetica-Bold", penwidth=4, color=lightgreen]
+}
+
+```
+
+# Log-likelihood profiling (LLP)
+
+## Log-likelihood profiling (LLP)[^3]
+
+[^3]: Jeleazcov et al. *Anesthesiology*. 2014.
+
+::: columns
+::: {.column width="50%"}
+![](./pics/llp.png){width="85%" fig-align="center"}
+:::
+
+::: {.column width="50%"}
+-   Assumption: changes in OFVs (dOFVs) with different parameter values follow a chi-square distribution.
+
+-   To obtain CI of a parameter (e.g., $\theta_1$):
+
+    -   Fix value of $\theta_1$ other than its final estimate while keep all other parameter unfixed.
+
+    -   Refit the model to obtain the OFV.
+
+    -   Find values of $\theta_1$ that changes OFV by, for example, 3.84 (P value=0.05 with df=1 assuming a chi-square distribution).
+:::
+:::
+
+## LLP advantages and disadvantages
+
+-   Advantages:
+    -   Do not assume symmetric normal distribution
+    -   Method available in open source platform: [PsN](https://uupharmacometrics.github.io/PsN/docs.html)
+-   Disadvantages:
+    -   Assume chi-square distribution for dOFV, which may only be approximately true for NLME[^4].
+    -   Rarely used in PMx modeling
+    -   One parameter at a time
+
+[^4]: Holford N. [Bootstrap and Confidence Interval](https://holford.fmhs.auckland.ac.nz/docs/bootstrap-and-confidence-intervals.pdf).
+
+## LLP implementations in PsN
+
+After NONMEM modeling fitting, LLP can be executed using PsN with command like:
+
+``` bash
+llp mod1.ctl -thetas=1,3 -rplots=2 -clean=0 -min_retries=3
+```
+
+-   This will evaluate uncertainty of THETA1 and THETA2 using LLP method with first guess of SE using `mod1.lst`.
+-   `-rplots=2` generates a few basic plots for output.
+-   `-clean=0` keeps all NONMEM fitting records.
+-   `-min_retries=3` usually needed to make sure each model fitting is successful.
+    -   If NONMEM fails, rerun the same sub-problem, up to 3 times, with reset initial conditions.”
+
+# Non-parametric bootstrap
+
+## Non-parametric bootstrap
+
+-   Assumption: random difference in observations that leads to uncertainty in parameter estimates.
+
+-   To obtain CI
+
+    -   Imagine an original dataset ({A,B,C,D,E}) with 5 subjects (i.e., ID in NONMEM).
+    -   Resample and refit each dataset:
+        -   Bootstrap Sample 1: ({A,C,C,D,E}): new set of parameter estimates 1
+        -   Bootstrap Sample 2: ({B,B,D,E,A}): new set of parameter estimates 2
+        -   Bootstrap Sample 3: ({C,D,E,E,E}): new set of parameter estimates 3
+        -   ...
+        -   Bootstrap Sample 1000: ({B,D,A,E,E}): new set of parameter estimates 1000
+    -   Summarize 2.5% and 97.5% percentiles across all new sets of parameter estimates
+
+## Non-parametric bootstrap advantages and disadvantages
+
+::: columns
+::: {.column width="50%"}
+-   Advantages:
+    -   Do not assume symmetric normal distribution.
+    -   Obtain uncertainty for all parameters at once.
+    -   Method available in open source platforms:
+        -   [PsN](https://uupharmacometrics.github.io/PsN/docs.html)
+        -   [MetrumRG MeRGE Expo 1](https://merge.metrumrg.com/expo/expo1-nonmem-foce/posts/bootstrap.html)
+:::
+
+::: {.column width="50%"}
+-   Disadvantages:
+    -   Computationally expansive
+    -   Not appropriate to use when:
+        -   Small subject number (N \< 10)
+        -   Frequentist prior are used
+        -   Performing model-based meta-analysis (MBMA)
+    -   Need to be cautious about the covariate stratification
+    -   Complex model: whether to include a parameter vector when estimation failed[^5]
+:::
+:::
+
+[^5]: Gastonguay M.R. *ASCPT*. 2005.
+
+## Non-parametric bootstrap implementations in PsN
+
+After NONMEM modeling fitting, non-parametric bootstrap can be executed using PsN with command like:
+
+``` bash
+bootstrap mod1.ctl -samples=500 -seed=12135 -rplots=2
+```
+
+-   This will evaluate uncertainty of all model parameters based on 500 refits of the NONMEM model.
+-   `-rplots=2` generates a few basic plots for output.
+
+# Sampling importance resampling (SIR)
+
+## Sampling importance resampling (SIR)[^6]
+
+[^6]: Dosne et al., *JPKPD*. 2016
+
+::: columns
+::: {.column width="40%"}
+![](./pics/sir-workflow.png)
+:::
+
+::: {.column width="30%"}
+Importance ratio (IR):
+
+$$IR = \frac{e^{-0.5*dOFV}}{relPDF}$$ $$dOFV = OFV_{i} - OFV_{final}$$ $$relPDF = \frac{PDF_{i}}{PDF_{final}}$$
+:::
+
+::: {.column width="30%"}
+-   Rule of thumb:
+
+    -   m is large enough (500-1000): similar to 500-1000 refit in bootstrap.
+
+    -   M/m ratio is important for SIR validity (5:1 is a reasonable starting point).
+:::
+:::
+
+## Where to find a SIR Proposal distribution?
+
+-   NONMEM covariance step (\$COV)-Most typical.
+-   Limited number (e.g., N=10) of non-parametric bootstrap.
+-   Educated guess.
+-   LLP[^7].
+
+[^7]: Broeker et al., *JPKPD*. 2020
+
+## SIR diagnostics[^8]
+
+[^8]: Dosne et al., *JPKPD*. 2016
+
+::: columns
+::: {.column width="50%"}
+![](./pics/dofv-plot.png)
+:::
+
+::: {.column width="50%"}
+-   Assumption: If the parameter vectors were representative of the true uncertainty, their dOFV distribution should follow a *Chi-square distribution* with a certain degree of freedom.
+-   Inverse cumulative density function (CDF) plot of a *Chi-square distribution*.
+    -   If the associated degree of freedom (DF) is *smaller*, the corresponding line is *lower* on the graph.
+:::
+:::
+
+## SIR diagnostics[^9]
+
+[^9]: Dosne et al., *JPKPD*. 2016
+
+::: columns
+::: {.column width="50%"}
+![](./pics/dofv-plot.png)
+:::
+
+::: {.column width="50%"}
+-   The $DF_{reference} = N_{parameters}$ in a model, an acceptable SIR should have dOFV plot with:
+    -   $DF_{proposal}>DF_{reference}$: blue dash line higher than gray solid line.
+        -   If not, increase variance of proposal distribution.
+    -   $DF_{final} \leq DF_{reference}$: blue solid line lower than gray solid line.
+        -   If not, increase M/m ratio.
+:::
+:::
+
+## SIR advantages
+
+-   Do not assume symmetric normal distribution.
+-   Obtain uncertainty for all parameters at once.
+-   Overcome non-parametric bootstrap drawbacks:
+    -   Faster.
+    -   No model refit: do not need to consider convergence.
+    -   Do not need to consider covariate imbalance and small sample size.
+    -   OK to use in MBMA or in the presence of frequentist prior.
+-   Well-developed diagnostics.
+-   Method available in open source platforms:
+    -   [PsN](https://uupharmacometrics.github.io/PsN/docs.html)
+    -   NONMEM
+
+## SIR disadvantages
+
+-   Still slow, although faster than bootstrap.
+-   Sensitive to proposal distributions[^10].
+-   May need multiple attempts based on diagnostics.
+
+[^10]: Broeker et al., *JPKPD*. 2020
+
+## SIR implementations in PsN
+
+After NONMEM modeling fitting, SIR can be executed using PsN with command like:
+
+``` bash
+sir -samples=2500 -resamples=500 -rplots=2 mod1.ctl
+```
+
+-   This will evaluate uncertainty of all model parameters based on 500 resampled parameter sets with a M/m ratio of 5:1 (2500:500).
+
+-   `-rplots=2` generates dOFV and a few other diagnostics.
+
+-   What if the diagnostics is not satisfied?
+
+    -   If $DF_{proposal}<DF_{reference}$, inflate proposal distribution variance.
+
+        -   `sir -samples=2500 -resamples=500 -theta_inflation=1.5 -omega_inflation=1.5 -sigma_inflation=1.5 -rplots=2 mod1.ctl`
+
+    -   If $DF_{final}>DF_{reference}$, increase M/m ratio.
+
+        -   `sir -samples=5000 -resamples=500 -rplots=2 mod1.ctl`
+
+## SIR Practical Suggestions
+
+-   Start with a small batch of sampling / resampling (e.g., 500/100) and check the diagnostics.
+    -   optimize the SIR conditions (e.g., proposal distribution variance, sampling to resampling ratio) as needed.
+-   Perform final SIR using the optimized SIR conditions.
+
+# Hands-on SIR
+
+# Multiple-iteration SIR
+
+## Multiple-iteration SIR[^11]
+
+[^11]: Dosne et al., *JPKPD*. 2017
+
+::: columns
+::: {.column width="65%"}
+![](pics/msir1.png)
+:::
+
+::: {.column width="35%"}
+![](pics/msir2.png)
+:::
+:::
+
+## Multiple-iteration SIR implementations in PsN
+
+After NONMEM modeling fitting, multiple iteration SIR can be executed using PsN with command like:
+
+``` bash
+sir -samples=2500,2500,2500,1000,1000 -resamples=500,500,500,500,500 -rplots=2 mod1.ctl
+```
+
+-   This will evaluate uncertainty of all model parameters based on 500 resampled parameter sets with multiple iteration sampling and resampling with M/m ratio of 5:1 (2500:500), 5:1 (2500:500), 5:1 (2500:500), 2:1 (1000:500), and 2:1 (1000:500).
+-   `-rplots=2` generates dOFV and a few other diagnostics.

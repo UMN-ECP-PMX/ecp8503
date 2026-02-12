@@ -110,7 +110,7 @@ $$
 -   NONMEM estimates the magnitude of the variance of a parameter in the population.
 -   Output is $\omega^2$: the variance of $\eta_i$ distribution.
     -   Although $\eta_i$ will also be estimated, it is not considered as population parameters.
--   In NONMEM, To specify a MODEL for BSV, we write it in terms of ETA, and say OMEGA is the standard deviation of the ETAs.
+-   In NONMEM, to specify a MODEL for BSV, we write it in terms of ETA, and say OMEGA ($\omega$) is the standard deviation of the ETAs ($\omega^2$ is variance).
     -   $CL = TVCL + ETA(1)$
     -   $V = TVV*EXP(ETA(2))$
 -   One ETA value per subject (based on the ID column in the NONMEM data set).
@@ -180,7 +180,9 @@ $$
 
     -   Although $\epsilon_{ij}$ will also be estimated, it is not considered as population parameters.
 
--   In NONMEM, to specify a MODEL for RUV, we write it in terms of EPS/ERR, and say SIGMA is the standard deviation of the EPS/ERR.
+-   In NONMEM, to specify a MODEL for RUV, we write it in terms of EPS/ERR, and say SIGMA ($\sigma$) is the standard deviation of the EPS/ERR ($\sigma^2$ is variance).
+
+-   One EPS value per observation.
 
 ## RUV
 
@@ -360,7 +362,7 @@ $TABLE TIME
 
 -   Same to `$INPT`
 -   A list of labels to describe what’s in the data file, i.e., the column headings
--   `$INPUT C, ID, TIME, AMT, DV, SS, II, WT, AGE, HT, PHTY, GENO, …`
+-   `$INPUT C ID TIME AMT DV SS II WT AGE HT PHTY GENO …`
 -   Some are required for NONMEM, others for PREDPP:
     -   Reserved data items: `ID, L1, L2, DV, MDV, TIME, DATE`, etc
 -   **CAREFUL**: NONMEM will NOT match these labels to labels on the columns of the dataset
@@ -496,9 +498,9 @@ $OMEGA
 ## `$OMEGA`
 
 -   Can have more than one `$OMEGA`
--   Can incorporate off-diagonal elements (block matrices) to characterize covariance/correlations among BSVs.  
+-   Can incorporate off-diagonal elements (block matrices) to characterize covariance/correlations among BSVs.
 
-```{.bash}
+``` bash
 $OMEGA BLOCK(2) ; VARIANCE COVARIANCE BLOCK(2)
  0.64           ; CL
  -0.24 0.58     ; V
@@ -506,7 +508,6 @@ $OMEGA BLOCK(2) ; VARIANCE COVARIANCE BLOCK(2)
 $OMEGA
   0.1           ; KA
 ```
-
 
 ## `$SIGMA`
 

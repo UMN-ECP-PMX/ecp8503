@@ -49,8 +49,11 @@ execute:
 
 -   Example: Sex (Male=1; Female=0)
     -   Linear:
-        -   `CL=THETA(1)`
-        -   `IF(SEX.EQ.1) CL=THETA(1)*(1+THETA(2))`
+        
+```{.bash}
+    CL=THETA(1)`
+    IF(SEX.EQ.1) CL=THETA(1)*(1+THETA(2))
+```
 
 ## Covariate modeling approaches
 
@@ -72,13 +75,13 @@ Pre-defined methods:
 
 -   Pre-define covariates of interest before looking at the data.
 
--   Adding covariate based on
+-   Adding covariates based on
 
     -   **Clinical relevance**: Adding a transporter effect on CL based on mechanistic understanding despite small effect size.
 
     -   **Regulartory interest**: Adding Asian population effect as covariate to support a PMDA submission.
 
--   Ignoring statistical significance during modeling.
+-   Ignoring statistical significance during modeling, at least partially.
 
 -   Model inference relies on post-modeling simulations (e.g., forest plots).
 
@@ -133,25 +136,40 @@ Pre-defined methods:
 ## Selection methods-(SCM)
 
 ::: columns
-::: {.column width="70%"}
+::: {.column width="80%"}
 ![](./pics/scm.png)
 :::
 
-::: {.column width="30%"}
--   Forward selection (univariate)
-    -   Base model -\> Add one covariate -\> Significantly better? -\> Yes, selected
-    -   Base model -\> Add another covariate -\> Significantly better? -\> No, not selected
-    -   ...
--   Backward Elimination
-    -   Full model[^1] -\> remove one covariate -\> significantly worse?[^2] -\> Yes, selected
-    -   Full model -\> remove another covariate -\> significantly worse? -\> No, not selected
-    -   ...
--   How to test significance?
-    -   Likelihood Ratio Test (LRT) for **nesting** models
+::: {.column width="20%"}
+<!-- -   Forward selection -->
+<!--     -   1st round: start with base model -->
+<!--         -   Base model -\> Add one covariate -\> Significantly better? -\> Yes, record a P value.  -->
+<!--         -   Base model -\> Add another covariate -\> Significantly better? -\> No, not selected -->
+<!--         -   ...retain the most significant covariate -->
+<!--     -   2nd round: start with base model + the most significant covariate in first round -->
+<!--         -   Base model -\> Add one covariate -\> Significantly better? -\> Yes, record a P value.  -->
+<!--         -   Base model -\> Add another covariate -\> Significantly better? -\> No, not selected -->
+<!--         -   ...retain the most significant covariate -->
+<!--     -   3rd round: start with base model + the most significant covariate in first two rounds -->
+<!--     -   ... -->
+
+<!-- -   Backward Elimination -->
+<!--     -   1st round: start with full model after forward selection -->
+<!--         -   Full model[^1] -\> remove one covariate -\> significantly worse?[^2] -\> Yes, retained. -->
+<!--         -   Full model -\> remove another covariate -\> significantly worse? -\> No, record a P value.  -->
+<!--         -   ...remove the least significant covariate -->
+<!--     -   2nd round: start with full model - the least significant covariate in first round -->
+<!--         -   Full model -\> remove one covariate -\> significantly worse?[^2] -\> Yes, retained. -->
+<!--         -   Full model -\> remove another covariate -\> significantly worse? -\> No, record a P value.  -->
+<!--         -   ...remove the least significant covariate -->
+<!--     -   3rd round: start with full model - the least significant covariate in first two rounds -->
+<!--     -   ... -->
+    
+-   How to test significance: Likelihood Ratio Test (LRT) for **nesting** models
 :::
 :::
 
-[^1]: Full model: the model include all covariates screened in univariate forward selection.
+[^1]: Full model: the model include all covariates screened in forward selection.
 
 [^2]: P-values during backward elimination are often stricter.
 
@@ -169,7 +187,7 @@ TVCL = THETA(1)
 TVCL = THETA(1)*(WT/70)**THETA(2)
 ```
 
--   If `WT/70` equals 1, then `(WT/70)**THETA(2)` equals 1, resulting in `TVCL = THETA(1)`.
+-   If `THETA(2)` equals 0, then `(WT/70)**THETA(2)` equals 1, resulting in `TVCL = THETA(1)`.
 -   So Model 1 is nested within Model 2.
 
 ## Another nesting example
@@ -207,7 +225,7 @@ TVCL = THETA(1)
 TVCL = THETA(1)*WT
 ```
 
--   No biological meaningful WT reference value to remove the effect of WT.
+-   If WT=1, Model 1 equals model 2, but WT is a variable, not a parameter.  
 -   Be careful. You can add COV effect without nesting.
 
 ## Statistical significance vs. clinical relevance

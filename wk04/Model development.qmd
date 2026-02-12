@@ -18,8 +18,6 @@ execute:
 
 ## Factors to guide model selections
 
-::: columns
-::: {.column width="30%"}
 Qualitative:
 
 -   Model convergence successful
@@ -29,38 +27,32 @@ Qualitative:
     -   Negative drug clearance?
 
     -   150% absolute bioavailability?
-:::
 
-::: {.column width="40%"}
-**Model selection based on numerical criteria**:
+[**Model selection based on numerical criteria**]{style="color:green;"}:
 
--   Nesting models:
+-   [Nesting models:]{style="color:green;"}
 
-    -   Likelihood ratio test (LRT) using difference of Objective Function Values (OFVs)
+    -   [Likelihood ratio test (LRT) using difference of Objective Function Values (OFVs)]{style="color:green;"}
 
--   Non-nesting models:
+-   [Non-nesting models:]{style="color:green;"}
 
-    -   Akaike Information Criterion (AIC)
+    -   [Akaike Information Criterion (AIC)]{style="color:green;"}
 
-    -   Bayesian Information Criterion (BIC)
-:::
+    -   [Bayesian Information Criterion (BIC)]{style="color:green;"}
 
-::: {.column width="30%"}
 Model evaluations:
 
 -   Parameter uncertainty (week 6)
 
     -   Parametric: asymptotic standard errors (`$COV`, need to "covariance step successful")
 
-    -   Non-parametric:
+    -   Non-parametric: Bootstrap or SIR
 
 -   Model evaluations (week 7):
 
     -   Diagnostic plots: PRED/IPRED vs DV, NPDE v TIME, etc.
 
-        -   Predictive checks.
-:::
-:::
+    -   Predictive checks.
 
 ## Example model selection factors[^1]
 
@@ -77,7 +69,20 @@ Model evaluations:
 
 ## Nesting
 
-Concept: A model is **nested** within another model if the larger model reduces exactly to the smaller model by setting part of the larger model to its **null value**, without changing the interpretation of remaining parameters. - Parameters - One- vs. two-compartment model - Add or remove an ETA on a parameter - Covariates - Setting body weight to its reference value, for example, 70 kg. - Setting sex to its reference group, for example, male.
+Concept: A model is **nested** within another model if the larger model reduces exactly to the smaller model by setting part of the larger model to its **null value**, without changing the interpretation of remaining parameters.
+
+-   Base model constructions
+
+    -   One- vs. two-compartment model.
+
+    -   Add or remove an ETA on a parameter
+
+-   Covariate modeling
+
+    -   Setting body weight effect (`THETA(2)`) to its null value (e.g., 0).
+        -   `TVCL = THETA(1)*(WT/70)**THETA(2)`
+    -   Setting sex effect (`THETA(2)`) to its null value (e.g., 0).
+        -   `TVCL = THETA(1)*THETA(2)**SEX`
 
 ## Example of nesting models: one vs two-compartment models
 
@@ -97,17 +102,17 @@ $$
 
 -   Model 1: `CL = THETA(1)`
 -   Model 2: `CL = THETA(1) * EXP(ETA(1))`
--   Fixing $\omega^2_{(1,1)}$ (variance of `ETA(1)` distribution):
+-   Fixing $\omega^2_{(1,1)}$ (variance of `ETA(1)` distribution) as 0:
     -   No between subject variability (i.e., zero variance)
     -   Model 2 (the larger model) reduces to Model 1 (the smaller model).
     -   Model 1 is nested within Model 2.
-    
+
 ## Degree of Freedom (DF)
--   The difference in the number of parameters between two models (competing vs. base models).
--   The number of parameters being set to their null value to make equalivalence of two models. 
+
+-   The difference in the number of parameters between two nested models (competing vs. base models). <!-- -   The number of parameters being set to their null value to make equalivalence of two models. -->
     -   Base model: `CL = THETA(1)`
     -   Competing model: `CL = THETA(1) * EXP(ETA(1))`
-    -   DF=1 when comparing two models. 
+    -   DF=1 when comparing two models.
 
 ## Nesting model comparison: likelihood ratio test (LRT)
 
@@ -144,6 +149,8 @@ $$
     -   A covariate is included if $dOFV \geq 6.63$ (i.e., $\alpha = 0.01$ with DF=1).
     -   A covariate is included if $dOFV \geq 10.8$ (i.e., $\alpha = 0.001$ with DF=1).
 
+## Nesting model comparison: LRT test criteria - in practice
+
 ```{r alpha_levels}
 #| warning: false
 #| message: false
@@ -156,42 +163,54 @@ data <- data.frame(n = rep(seq(1, 10, 1), 3),
                    alpha = c(rep(0.05, 10), rep(0.01, 10), rep(0.001, 10))) %>% 
   mutate(p = 1-(1-alpha)^n) %>% 
   mutate(`P value`=case_when(
-    alpha==0.05~"P value ≤ 0.05 (dOFV ≥ 3.84)", 
-    alpha==0.01~"P value ≤ 0.01 (dOFV ≥ 6.63)", 
-    alpha==0.001~"P value ≤ 0.001 (dOFV ≥ 10.8)"))
+    alpha==0.05~"Per test alpha=0.05 (dOFV ≥ 3.84)", 
+    alpha==0.01~"Per test alpha=0.01 (dOFV ≥ 6.63)", 
+    alpha==0.001~"Per test alpha=0.001 (dOFV ≥ 10.8)"))
 
 ggplot(data, aes(x=n, y=p, group=`P value`, color=`P value`))+
   geom_point()+geom_line()+
-  xlab("Number of multiple testing")+
+  # geom_hline(yintercept = 0.05, linetype = "dashed")+
+  ggtitle("Assume each test is independent with exact alpha level")+
+  xlab("Number of likelihood ratio tests")+
   ylab("Probability of ≥1 false positive")+
   theme_bw()
 ```
 
 ## Example of non-nesting models: one-compartment PK vs TMDD models
 
-A one-compartment PK model:
+A two-compartment PK model:
 
 $$
-\frac{dC_p}{dt} \times V1=-CL\times C_p
+\frac{dC_p}{dt} \times V1 = -CL\times C_p-Q \times (C_p - C_t) \\
+\frac{dC_t}{dt} \times V2 = Q  \times (C_p - C_t)
 $$
 
 A target-mediated drug disposition (TMDD) model:
 
 $$
-\frac{dC_p}{dt} = -K_{on} \times C_p \times R + K_{off} \times RC \\
+\frac{dC_p}{dt} = -K_{on} \times C_p \times R + K_{off} \times RC - K_{el} \times C_p\\
 \frac{dR}{dt} = K_{syn}-K_{deg}\times R-K_{on} \times C_p \times R + K_{off} \times RC \\
 \frac{dRC}{dt} = K_{on} \times C_p \times R - K_{off} \times RC
 $$ We cannot reduce one model to make it the same as the other via fixing part of the model to null value (i.e., non-nesting models).
 
 ## Non-nesting model comparison
 
-Two metrics useful to compare non-nesting models: - Akaike Information Criterion (AIC): $AIC = -2 \times ln(L) + 2 \times K$[^2] - Penalizes likelihood with number of parameters. - Bayesian Information Criterion (BIC): $BIC = -2 \times ln(L) + K \times ln(N)$[^3] - Penalizes parameters more heavily as sample size N increases. - Tend to prefer simpler model when N is large.
+Two metrics useful to compare non-nesting models:
+
+-   Akaike Information Criterion (AIC): $AIC = -2 \times ln(L) + 2 \times K$
+
+    -   Penalizes likelihood with number of parameters.
+
+-   Bayesian Information Criterion (BIC): $BIC = -2 \times ln(L) + K \times ln(N)$[^2]
+
+    -   Penalizes parameters more heavily as sample size N increases.
+
+    -   Tend to prefer simpler model when N is large.
 
 [^2]: L: likelihood (i.e., probability of the data given a model); K: number of parameters in a model; N: number of observations.
 
-[^3]: L: likelihood (i.e., probability of the data given a model); K: number of parameters in a model; N: number of observations.
-
 ## Non-nesting model comparison
 
--   Both AIC and BIC cannot be used for statistical test (No P values).
+-   Lower AIC or BIC values indicate a better, more parsimonious model that fits the data well without overfitting.
+-   Both AIC and BIC cannot be used for statistical test (No P values!).
 -   Comparison AIC and BIC need pre-defined criteria.

@@ -16,17 +16,19 @@ execute:
 
 ![](./pics/mod-dev-tree.png){fig-align="center"}
 
-## Covariate modeling
+## Covariate modeling[^1]
 
--   When: Ideally after establishing the base model.
--   Why: Help us understand which patient- or drug-specific characteristics are important determinants of PK parameters.
+[^1]: Richard Brundage. Model Building.
+
+-   **When**: Ideally after establishing the base model.
+-   **Why**: Help us understand which patient- or drug-specific characteristics are important determinants of PK parameters.
     -   Mechanistic understanding:
         -   Impact of disease type on CL.
         -   Drug-drug interactions.
     -   Controlling PK variability:
         -   Dose selection for a special population (e.g., obese patients).
         -   Dosing interval adjustment for extended release formulation.
--   How: Specify a mathematical relationship between a PK parameter and covariates.
+-   **How**: Specify a mathematical relationship between a PK parameter and covariates.
     -   Usually requires adding parameters (mostly THETAs) in the model.
 
 ## Continuous covariates
@@ -45,12 +47,12 @@ execute:
     -   Interpretation of `THETA(1)`: Typical CL for a subject with 70 kg body weight.
     -   If replacing 70 with 60, for example, the interpretation of `THETA(1)` changes to "typical CL for a subject with 60 kg body weight", with no impact on model fittings.
 
-## Categorical covariates
+## Categorical covariates {style="font-size: 1em"}
 
 -   Example: Sex (Male=1; Female=0)
     -   Linear:
-        
-```{.bash}
+
+``` bash
     CL=THETA(1)`
     IF(SEX.EQ.1) CL=THETA(1)*(1+THETA(2))
 ```
@@ -93,13 +95,13 @@ Pre-defined methods:
 :::
 :::
 
-## Covariate modeling approaches
+## Covariate modeling approaches {style="font-size: 1em"}
 
 -   Active area of interest.
 -   No single method is universally accepted as the "gold-standard".
 -   Choice of method depends on modeling objectives and context (i.e., fit-for-purpose)
 
-## Covariate examinations: **BEFORE** you start covariate modeling
+## Covariate examinations: **BEFORE** you start covariate modeling {style="font-size: 0.9em"}
 
 -   Know you covariates
     -   Missing values?
@@ -114,16 +116,18 @@ Pre-defined methods:
     -   Count in each category of categorical covariates (e.g., sex)
         -   Imbalance across category? Male:Female=20:1
 
-## Data reduction: **BEFORE** you start covariate modeling
+## Data reduction: **BEFORE** you start covariate modeling {style="font-size: 1em"}
 
 -   Examine covariate distributions for correlation/colinearity
     -   Select covariates carrying unique information (relatively independent).
     -   Rule of thumb: be cautious when $R^2>0.3$.
 -   Exclude or combine covariates carrying repetitive information.
-    -   WT, HT, BSA and BMI are highly correlated. If one included as a covariate, others may not need to be included.
-    -   BLACK (No=0, Yes=1), WHITE (No=0, Yes=1) and ASIAN (No=0, Yes=1). May lump into one covariate (BLACK=1, WHITE=2, ASIAN=3, OTHER=4).
+    -   WT, HT, BSA and BMI are highly correlated.
+        -   If one included as a covariate, others may not need to be included.
+    -   BLACK (No=0, Yes=1), WHITE (No=0, Yes=1) and ASIAN (No=0, Yes=1).
+        -   May lump into one covariate (BLACK=1, WHITE=2, ASIAN=3, OTHER=4).
 
-## Other consideration points
+## Other consideration points {style="font-size: 1em"}
 
 -   Was the study designed to estimate a covariate effect?
     -   SNP impact on CL.
@@ -135,45 +139,67 @@ Pre-defined methods:
 
 ## Selection methods-(SCM)
 
-::: columns
-::: {.column width="80%"}
 ![](./pics/scm.png)
+
+-   How to test significance? Likelihood Ratio Test (LRT) for **nesting** models
+
+## Selection methods-(SCM) {style="font-size: 0.6em"}
+
+::: columns
+::: {.column width="50%"}
+Forward selection
+
+-   1st round: start with base model[^2]
+
+    -   Add a covariate: significantly better? Yes, record a P value
+
+    -   Add another covariate: significantly better? No, unselected
+
+    -   ...retain the most significant covariate
+
+-   2nd round: start with base model adding the covariate selected in first round
+
+    -   Add a covariate: significantly better? Yes, record a P value
+
+    -   Add another covariate: significantly better? No, unselected
+
+    -   ...retain the most significant covariate
+
+-   3rd round: start with base model adding the covariates selected in first two rounds
+
+-   ...until no significant covariates were found -\> **full model**
 :::
 
-::: {.column width="20%"}
-<!-- -   Forward selection -->
-<!--     -   1st round: start with base model -->
-<!--         -   Base model -\> Add one covariate -\> Significantly better? -\> Yes, record a P value.  -->
-<!--         -   Base model -\> Add another covariate -\> Significantly better? -\> No, not selected -->
-<!--         -   ...retain the most significant covariate -->
-<!--     -   2nd round: start with base model + the most significant covariate in first round -->
-<!--         -   Base model -\> Add one covariate -\> Significantly better? -\> Yes, record a P value.  -->
-<!--         -   Base model -\> Add another covariate -\> Significantly better? -\> No, not selected -->
-<!--         -   ...retain the most significant covariate -->
-<!--     -   3rd round: start with base model + the most significant covariate in first two rounds -->
-<!--     -   ... -->
+::: {.column width="50%"}
+Backward Elimination
 
-<!-- -   Backward Elimination -->
-<!--     -   1st round: start with full model after forward selection -->
-<!--         -   Full model[^1] -\> remove one covariate -\> significantly worse?[^2] -\> Yes, retained. -->
-<!--         -   Full model -\> remove another covariate -\> significantly worse? -\> No, record a P value.  -->
-<!--         -   ...remove the least significant covariate -->
-<!--     -   2nd round: start with full model - the least significant covariate in first round -->
-<!--         -   Full model -\> remove one covariate -\> significantly worse?[^2] -\> Yes, retained. -->
-<!--         -   Full model -\> remove another covariate -\> significantly worse? -\> No, record a P value.  -->
-<!--         -   ...remove the least significant covariate -->
-<!--     -   3rd round: start with full model - the least significant covariate in first two rounds -->
-<!--     -   ... -->
-    
--   How to test significance: Likelihood Ratio Test (LRT) for **nesting** models
+-   1st round: start with full model[^3]
+
+    -   Remove a covariate: significantly worse? Yes, retained
+
+    -   Remove another covariate: significantly worse? No, record a P value
+
+    -   ...remove the least significant covariate
+
+-   2nd round: start with full model removing the covariate selected in first round
+
+    -   Remove a covariate: significantly worse? Yes, retained
+
+    -   Remove another covariate: significantly worse? No, record a P value
+
+    -   ...remove the least significant covariate
+
+-   3rd round: start with full model removing the covariates selected in first two rounds
+
+-   ...until no non-significant covariates were found -\> **final model**
 :::
 :::
 
-[^1]: Full model: the model include all covariates screened in forward selection.
+[^2]: Base model: model with no covariates
 
-[^2]: P-values during backward elimination are often stricter.
+[^3]: Full model: model with all covariates identified by forward selections.
 
-## Nesting example
+## Nesting example {style="font-size: 1em"}
 
 -   Model 1:
 
@@ -190,7 +216,7 @@ TVCL = THETA(1)*(WT/70)**THETA(2)
 -   If `THETA(2)` equals 0, then `(WT/70)**THETA(2)` equals 1, resulting in `TVCL = THETA(1)`.
 -   So Model 1 is nested within Model 2.
 
-## Another nesting example
+## Another nesting example {style="font-size: 1em"}
 
 -   Model 1:
 
@@ -211,7 +237,7 @@ TVCL = THETA(1)
 -   No predictive difference between males and females when `THETA(2)` is set to its null value
 -   Smaller model (without SEX) is nested
 
-## Nesting?
+## Nesting? {style="font-size: 1em"}
 
 -   Model 1:
 
@@ -225,10 +251,11 @@ TVCL = THETA(1)
 TVCL = THETA(1)*WT
 ```
 
--   If WT=1, Model 1 equals model 2, but WT is a variable, not a parameter.  
--   Be careful. You can add COV effect without nesting.
+-   If WT=1, Model 1 equals model 2. 
+-   But WT is a variable, not a parameter.
+-   Be careful. You can add COV effect without nesting[^1].
 
-## Statistical significance vs. clinical relevance
+## Statistical significance vs. clinical relevance {style="font-size: 0.8em"}
 
 Example 1:
 
@@ -237,10 +264,10 @@ TVCL = THETA(1)
 IF(SEX.EQ.0) TVCL = TVCL*THETA(2)
 ```
 
--   Fix `THETA(2)=1`, OFV=69.9
--   Estimate `THETA(2)`, `THETA(2)`estimated as 1.1, OFV=62.1
+-   Fix `THETA(2)=1`, OFV=69.9.
+-   Estimate `THETA(2)`, `THETA(2)`estimated as 1.1, OFV=62.1.
 -   Clinical relevant?
-    -   Females have a 10% faster CL than males
+    -   Females have a 10% faster CL than males.
 -   Statistical significant?
     -   dOFV=69.9-62.1=7.8
     -   Using a P value criteria (0.01) with 1 DF, if dOFV\>6.63, the COV is considered statistically significant.
@@ -249,7 +276,7 @@ IF(SEX.EQ.0) TVCL = TVCL*THETA(2)
     -   Any small difference between subgroups can be detected.
     -   Do we really care 10% faster CL clinically in females than males clinically.
 
-## Statistical significance vs. clinical relevance
+## Statistical significance vs. clinical relevance {style="font-size: 0.8em"}
 
 Example 2:
 
@@ -258,20 +285,22 @@ TVCL = THETA(1)
 IF(SEX.EQ.0) TVCL = TVCL*THETA(2)
 ```
 
--   Fix `THETA(2)=1`, OFV=21.3
--   Estimate `THETA(2)`, `THETA(2)`estimated as 0.4, OFV=20.1
+-   Fix `THETA(2)=1`, OFV=21.3.
+-   Estimate `THETA(2)`, `THETA(2)`estimated as 0.4, OFV=20.1.
 -   Clinical relevant?
-    -   Females have a 60% slower CL than males
+    -   Females have a 60% slower CL than males.
 -   Statistical significant?
     -   dOFV=21.3-20.1=1.2
     -   Using a P value criteria (0.01) with 1 DF, only if dOFV\>6.63, the COV is considered statistically significant.
 -   Statistically insignificant $\neq$ clinically irrelevant
     -   Maybe your sample size is too small (n=8).
-    -   Although COV effect is large (60%), the study is not sufficiently powered to detect it
+    -   Although COV effect is large (60%), the study is not sufficiently powered to detect it.
 
-## Pre-defined methods: FFEM
+## Pre-defined methods: FFEM {style="font-size: 0.9em"}
 
-Full fixed-effect modeling (FFEM)\[\^3\] procedure:
+Full fixed-effect modeling (FFEM)[^4] procedure:
+
+[^4]: Marc Gastonguay. *PAGE*. 2004.
 
 -   Develop a stable base model.
 
@@ -293,11 +322,11 @@ Full fixed-effect modeling (FFEM)\[\^3\] procedure:
 
 -   Make inference based on simulations using point estimates and 95% CIs.
 
-\[\^3\] Marc Gastonguay. *PAGE*. 2004.
+## **Thoughful** considerations {style="font-size: 1em"}
 
-## **Thoughful** considerations:
+Incorporate covariate effects in the model based on[^5]:
 
-incorporate covariate effects in the model based on\[\^3\]:
+[^5]: Marc Gastonguay. *PAGE*. 2004.
 
 -   Scientific and clinical interest.
 -   Mechanistic plausibility.
@@ -378,9 +407,9 @@ $$
 VIF_i = \frac{1}{1-R_i^2}
 $$
 
-For a general covariate with $\geq1$ degree of freedom ($df_i$)[^3]:
+For a general covariate with $\geq1$ degree of freedom ($df_i$)[^6]:
 
-[^3]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
+[^6]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
 
 $$
 GVIF_i = \frac{det(V_{jj})}{det(V_{jj}^*)} \\
@@ -389,7 +418,7 @@ $$
 
 -   Provide a method to globally pre-screen covariate collinearity, include both continuous and categorical covariates, before NLME covariate modeling.
 
-## Variance inflation factor (VIF) criteria
+## Variance inflation factor (VIF) criteria {style="font-size: 1em"}
 
 $$
 VIF_i = \frac{1}{1-R_i^2}
@@ -401,7 +430,7 @@ $$
 -   VIF=10: high collinearity ($R_i^2=0.9$)
 -   Usually target VIF\<2, ideally VIF\<1.5.
 
-## Variance inflation factor (VIF) implementations
+## Variance inflation factor (VIF) implementations {style="font-size: 1em"}
 
 ::: columns
 ::: {.column width="50%"}
@@ -409,7 +438,9 @@ $$
 #| echo: true
 
 # Fit full model
-mod_full <- glm(DOSE ~ ., data = cov_all, family = "gaussian")
+mod_full <- glm(DOSE ~ ., 
+                data = cov_all, 
+                family = "gaussian")
 
 # Extract full model VIF
 vif_full <- car::vif(mod_full)
@@ -423,9 +454,11 @@ vif_full
 
 # Fit reduced model
 mod_reduce <- glm(DOSE ~ ., 
-                  data = cov_all %>% dplyr::select(-ALB, # correlates with CP
-                                                   -RF,  # correlates with EGFR
-                                                   -STUDY), # correlates with multiple covariates
+                  data = cov_all %>% 
+                    dplyr::select(
+                      -ALB,    # cor with CP
+                      -RF,     # cor with EGFR
+                      -STUDY), # cor with many
             family = "gaussian")
 
 # Extract reduced model VIF
@@ -436,9 +469,9 @@ vif_reduce
 :::
 :::
 
-## Construct FFEM[^4]
+## Construct FFEM[^7] {style="font-size: 1em"}
 
-[^4]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
+[^7]: Marc Gastonguay. *PAGE*. 2004.
 
 $$
 TVP = \theta_n \times \prod_{1}^{m} (\frac{COV_{mi}}{ref_m})^{\theta_(m+n)}\times \prod_{1}^{p}\theta_{p+m+n}^{COV_{pi}}
@@ -452,7 +485,7 @@ $$
     -   $COV_{pi} = 0$
 -   $\theta_{m+n}$ and $\theta_{p+m+n}$: estimated parameters describing the magnitude of the covariate-parameter relationship.
 
-## Construct FFEM example
+## Construct FFEM example {style="font-size: 1em"}
 
 $$
 TVCL=THETA(1) \times (\frac{WT}{70})^{THETA(2)} \times (\frac{AGE}{43})^{THETA(3)} \times (\frac{CRCL}{80})^{THETA(4)}
@@ -465,9 +498,9 @@ $$
 
 ![](./pics/forest-plot.png)
 
-## Pros and Cons of selection methods[^5]
+## Pros and Cons of selection methods[^8] {style="font-size: 1em"}
 
-[^5]: Niclas Jonsson and Joakim Nyberg. *ACoP*. 2025.
+[^8]: Niclas Jonsson and Joakim Nyberg. *ACoP*. 2025.
 
 -   Pros:
     -   Widely used.
@@ -481,9 +514,9 @@ $$
     -   Problematic inference due to multiple testing (arbitrary P value cut-off).
     -   Long run-times (i.e., computationally expansive).
 
-## Pros and Cons of Pre-defined methods[^6]
+## Pros and Cons of Pre-defined methods[^9]
 
-[^6]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
+[^9]: Marc Gastonguay. *PAGE*. 2004.
 
 ::: columns
 ::: {.column width="50%"}
@@ -496,6 +529,7 @@ $$
             -   Wide confidence intervals regardless of effect size.
     -   Less expansive computationally.
     -   Answer clinically relevant questions using simulations with clinically relevant covariates.
+    -   Potentially reducing the number of multiple testing (reduce false positive rate).
 :::
 
 ::: {.column width="50%"}

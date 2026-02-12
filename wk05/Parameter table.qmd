@@ -12,21 +12,35 @@ execute:
   enabled: true
 ---
 
-## NLME parameter table (fixed-effect parameters)[^1]
+## Examples[^1]
 
-[^1]: MeRGE Expo 1 <https://merge.metrumrg.com/expo/expo1-nonmem-foce/>
+::: columns
+::: {.column width="50%"}
 
 ![](./pics/fe.png){fig-align="center"}
 
-## NLME parameter table example (random-effect parameters)[^2]
+:::
 
-[^2]: MeRGE Expo 1 <https://merge.metrumrg.com/expo/expo1-nonmem-foce/>
-
+::: {.column width="50%"}
 ![](./pics/re.png){fig-align="center"}
+:::
+:::
 
-## Fixed-effect parameters
+[^1]: MeRGE Expo 1 <https://merge.metrumrg.com/expo/expo1-nonmem-foce/>
+
+# Fixed-effect parameters
+
+## Table elements[^1]
+
+[^1]: MeRGE Expo 1 <https://merge.metrumrg.com/expo/expo1-nonmem-foce/>
 
 ::: columns
+::: {.column width="50%"}
+
+![](./pics/fe.png){fig-align="center"}
+
+:::
+
 ::: {.column width="50%"}
 -   Parameter descriptions
 
@@ -40,6 +54,16 @@ execute:
 
     -   Full name for abbreviations?
     -   How were RSE or CI calculated
+:::
+:::
+
+
+## Table elements[^1]
+
+::: columns
+::: {.column width="50%"}
+![](./pics/fe.png){fig-align="center"}
+
 :::
 
 ::: {.column width="50%"}
@@ -59,35 +83,39 @@ execute:
 :::
 :::
 
-## Fixed-effect parameters: Point estimates
+## Point estimates
 
 -   Output file:`.ext`
 -   Final point estimates in the row with `Iteration=-1000000000`.
 
 ![](./pics/ext.png){fig-align="center"}
 
-## Point estimates
+## Point estimates (interpretable) {style="font-size: 1em"}
 
-Back-transform model parameters when necessary
+Back-transform model parameters for **interpretability**
 
 -   For example, if a parameter is modeled in:
 
     -   log scale (log-transformation):
+        
+        -   Commonly use, natural bound of 0.
 
-        -   NONMEM: $CL=EXP(THETA(1))$
+        -   NONMEM: `CL=EXP(THETA(1))`.
 
         -   Back-transform: report $e^{\theta_1}$ instead of $\theta_1$.
 
--   logit scale (logit-transformtion):
+    -   logit scale (logit-transformation):
+    
+        -   Commonly use, natural bounds between 0 and 1.
 
-    -   NONMEM: $F=EXP(THETA(1))/(EXP(THETA(1)+1))$
+        -   NONMEM: `F=EXP(THETA(1))/(EXP(THETA(1)+1))`.
 
-    -   Back-transform: report $\frac{e^{\theta_1}}{e^{\theta_1}+1}$ instead of $\theta_1$.
+        -   Back-transform: report $\frac{e^{\theta_1}}{e^{\theta_1}+1}$ instead of $\theta_1$.
 
-## Fixed-effect parameters: Uncertainty (SE)
+## Uncertainty (SE) {style="font-size: 1em"}
 
 -   Output file: `.cov`
-    -   SE of a parameter: $SE=sqrt{diag}$
+    -   SE of a parameter: $SE=sqrt(diag)$
     -   Although also available in `.ext` row `Iteration=-10000000001`.
 
 $$
@@ -99,33 +127,28 @@ $$
 \end{bmatrix}
 $$
 
-## Fixed-effect parameters: Uncertainty (RSE)
+## Uncertainty (RSE) {style="font-size: 1em"}
 
-::: columns
-::: {.column width="50%"}
-If a parameter is in
+If a parameter is modeled in
 
--   Normal scale: $RSE=\frac{SE}{\hat{\theta}} \times 100\%$
+-   Normal scale: $RSE=\frac{SE}{\hat{\theta}} \times 100\%$[^2]
 
--   Log scale: $RSE=sqrt{e^{diag}-1}$
+-   Log scale: $RSE=sqrt(e^{diag}-1)$
 
-    -   $diag$: a diagonal element of the covariance matrix (i.e., variance of SE).
-:::
+    -   $diag$: a diagonal element of the covariance matrix (i.e., variance of an uncertainty distribution).
 
-::: {.column width="50%"}
-If a parameter is in   
-
--   Logit scale: 
+-   Logit scale:
     -   $RSE=\frac{SE}{\hat{\theta}} \times 100\%$ (may not appropriate)
-    -   $RSE=\frac{SE^{*}}{\hat{\theta^{*}}} \times 100\%$
+
+    -   $RSE=\frac{SE^{*}}{\hat{\theta^{*}}} \times 100\%$ (more accurately)
 
         -   $\hat{\theta^{*}} = \frac{e^{\hat{\theta}}}{e^{\hat{\theta}}+1}$
 
         -   $SE^{*}=SE \times \theta\times (1-\theta)$ (Delta method)
-:::
-:::
 
-## Fixed-effect parameters: Uncertainty (confidence interval)
+[^2]: $\hat{\theta}$: point estimate of a parameter
+
+## Uncertainty (confidence interval) {style="font-size: 1em"}
 
 ::: columns
 ::: {.column width="50%"}
@@ -134,6 +157,7 @@ If a parameter is in
         -   Assuming normal distributions: estimates $\pm$ 1.96\*SE.
     -   Non-parametric (asymmetrical):
         -   Bootstrap, LLP, SIR and Bayesian (week 6).
+        
 :::
 
 ::: {.column width="50%"}
@@ -141,45 +165,9 @@ If a parameter is in
 :::
 :::
 
-## Random-effect parameters
+# Random-effect parameters
 
--   Majority of the elements are similar to the fixed-effect parameters:
-    -   Parameter descriptions, abbreviations, and labels.
-    -   Point estimates (`Iteration=-1000000000` in `.ext`).
-    -   Uncertainty: SE, RSE or CV.
-    -   Footnotes:
-        -   Full name for abbreviations?
-        -   How were RSE or CI calculated
--   Report $CV\%$ for BSV terms.
--   Report $Corr$ for covariance terms.
--   Report $CV\%$ or $SD$ for proportional or additive RUV, respectively
--   Report shrinkage.
--   Footnotes: how were $CV\%$ and $SD$of BSV and RUV calculated.
-
-## Random-effect parameters: CV% of BSV
-
-::: columns
-::: {.column width="50%"}
--   A log-normal distribution is commonly used for model BSV.
-    -   Avoid negative values in individual PK parameters (e.g., CL).
-    -   `CL=TVCL* EXP(ETA(1))`
-    -   $CV\% = sqrt{e^{\omega_{1,1}^2}-1} \times 100\%$
--   If a normal distribution is used instead
-    -   `CL=TVCL+ETA(1)`
-    -   $CV\%=sqrt{\omega_{1,1}^2} \times 100\%$
-:::
-
-::: {.column width="50%"}
--   If a logit-normal distribution is used:
-    -   `F=EXP(THETA(1)+ETA(1))/(EXP(THETA(1)+ETA(1))+1)`
-    -   Variability depends on mean.
-    -   $CV\%$ is not appropriate, $SD$ is calculated instead using R functions like `logitnorm::momentsLogitnorm`[^3]
-:::
-:::
-
-[^3]: https://github.com/metrumresearchgroup/pmparams/blob/main/R/getSD-logit0.R
-
-## Random-effect parameters: Corr of covariance terms
+## Table elements {style="font-size: 1em"}
 
 ::: columns
 ::: {.column width="50%"}
@@ -187,40 +175,107 @@ If a parameter is in
 :::
 
 ::: {.column width="50%"}
--   $Corr=\frac{COV_{p1,p2}}{sqrt{VAR_{p1}} \times sqrt{VAR_{p2}}}$
-    -   $COV_{p1,p2}$: estimated covariance between parameters 1 and 2 (p1 and p2).
-    -   $VAR_{p1}$: estimated variance of p1.
-    -   $VAR_{p2}$: estimated variance of p2.
--   Example: $Corr_{(CL/F,V2/F)}=\frac{0.0703}{sqrt{0.114} \times sqrt{0.0824}}=0.0725$
+-   Majority of the elements are similar to the fixed-effect parameters:
+    -   Parameter descriptions, abbreviations, and labels.
+    -   Point estimates (`Iteration=-1000000000` in `.ext`).
+    -   Uncertainty: SE, RSE or CV.
+    -   Footnotes:
+        -   Full name for abbreviations?
+        -   How were RSE or CI calculated
+
 :::
 :::
 
-## Random-effect parameters: CV% or SD for RUV
-
-Combined error model: `Y = IPRED*(1+EPS(1))+EPS(2)`
-
--   Report $CV\%$ for proportional error term: $CV\%=sqrt{\sigma^2_{1,1}}$
--   Report $SD$ for additive error term: $SD=sqrt{\sigma^2_{2,2}}$
-
-## Random-effect parameters: Shrinkage ($\eta$ shrinkage)
+## Table elements {style="font-size: 1em"}
 
 ::: columns
 ::: {.column width="50%"}
--   When the individual data brings only few information about the individual parameter value, the individual estimates (e.g., empirical Bayes estimates, EBEs) is close to (or “shrinks” to) population mean[^4].
+![](./pics/re.png){fig-align="center"}
+:::
+
+::: {.column width="50%"}
+-   Report $CV\%$ for BSV terms.
+-   Report $Corr$ for covariance terms.
+-   Report $CV\%$ or $SD$ for proportional or additive RUV, respectively
+-   Report shrinkage.
+-   Footnotes: how were $CV\%$ and $SD$ of BSV and RUV calculated.
+
+:::
+:::
+
+## CV% of BSV
+
+-   A log-normal distribution is commonly used for model BSV.
+    -   Avoid negative values in individual PK parameters (e.g., CL).
+    -   `CL=TVCL* EXP(ETA(1))`
+    -   $CV\% = sqrt(e^{\omega_{1,1}^2}-1) \times 100\%$
+-   If a normal distribution is used instead
+    -   `CL=TVCL+ETA(1)`
+    -   $CV\%=sqrt(\omega_{1,1}^2) \times 100\%$
+-   If a logit-normal distribution is used:
+    -   `F=EXP(THETA(1)+ETA(1))/(EXP(THETA(1)+ETA(1))+1)`
+    -   Variability depends on mean.
+    -   $CV\%$ is not appropriate, $SD$ is calculated instead using exact moments[^3]. 
+    
+```{.r}
+# m: mean of the logit term
+# v: variance of the logit term
+moments <- logitnorm::momentsLogitnorm(mu=m, sigma=sqrt(v))
+sd <- sqrt(moments[["var"]])
+```
+
+[^3]: https://github.com/metrumresearchgroup/pmparams/blob/main/R/getSD-logit0.R
+
+## Corr of covariance terms{style="font-size: 0.9em"}
+
+::: columns
+::: {.column width="50%"}
+![](./pics/re.png){fig-align="center"}
+:::
+
+::: {.column width="50%"}
+-   $Corr=\frac{COV_{p1,p2}}{sqrt(VAR_{p1}) \times sqrt(VAR_{p2})}$
+    -   $COV_{p1,p2}$: estimated covariance between parameters 1 and 2 (p1 and p2).
+    -   $VAR_{p1}$: estimated variance of p1.
+    -   $VAR_{p2}$: estimated variance of p2.
+    
+$$
+\begin{bmatrix}
+    VAR_{p1}    & COV_{p1,p2} \\
+    COV_{p2,p1} & VAR_{p2}    \\
+\end{bmatrix}
+$$
+    
+-   Example: $Corr_{(\omega^2_{CL/F},\omega^2_{V2/F})}=\frac{0.0703}{sqrt(0.114) \times sqrt(0.0824)}=0.0725$
+
+:::
+:::
+
+## CV% or SD for RUV{style="font-size: 1em"}
+
+Combined error model: `Y = IPRED*(1+EPS(1))+EPS(2)`
+
+-   Report $CV\%$ for proportional error term: $CV\%=sqrt(\sigma^2_{1,1})$
+-   Report $SD$ for additive error term: $SD=sqrt(\sigma^2_{2,2})$
+
+## Shrinkage ($\eta$ shrinkage){style="font-size: 1em"}
+
+::: columns
+::: {.column width="50%"}
+-   When the individual data brings only **few information (i.e., sparse)** about the individual parameter value, the individual estimates (e.g., empirical Bayes estimates, EBEs) is close to (or “shrinks” to) population mean[^4].
 -   Output file:`.shk`
 -   $\eta_i-shrinkage = 1-\frac{SD_{\eta_i}}{\omega}$ (standard)
 -   $\eta_i-shrinkage = 1-\frac{VAR_{\eta_i}}{\omega^2}$
 :::
 
 ::: {.column width="50%"}
-
 ![](./pics/shrinkage.png)
 :::
 :::
 
 [^4]: Understanding shrinkage <https://monolixsuite.slp-software.com/monolix/2024R1/understanding-shrinkage>
 
-## $\eta$ shrinkage[^5]
+## $\eta$ shrinkage[^5]{style="font-size: 1em"}
 
 [^5]: Savic RM, Karlsson MO. *AAPS J*. 2009
 

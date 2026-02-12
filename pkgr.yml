@@ -18,6 +18,7 @@ Packages:
   - GGally
   - car
   - yspec
+  - logitnorm
 
 Repos:
   - MPN: https://mpn.metworx.com/snapshots/stable/2025-08-18

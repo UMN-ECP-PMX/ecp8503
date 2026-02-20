@@ -4,6 +4,7 @@ author: "Shen Cheng"
 date: today
 format: 
   revealjs: 
+    transition: none
     smaller: true
     scrollable: true
     embed-resources: true
@@ -251,9 +252,11 @@ TVCL = THETA(1)
 TVCL = THETA(1)*WT
 ```
 
--   If WT=1, Model 1 equals model 2. 
+-   If WT=1, Model 1 equals model 2.
 -   But WT is a variable, not a parameter.
--   Be careful. You can add COV effect without nesting[^1].
+-   Be careful. You can add COV effect without nesting[^4].
+
+[^4]: Richard Brundage. Model Building.
 
 ## Statistical significance vs. clinical relevance {style="font-size: 0.8em"}
 
@@ -298,9 +301,9 @@ IF(SEX.EQ.0) TVCL = TVCL*THETA(2)
 
 ## Pre-defined methods: FFEM {style="font-size: 0.9em"}
 
-Full fixed-effect modeling (FFEM)[^4] procedure:
+Full fixed-effect modeling (FFEM)[^5] procedure:
 
-[^4]: Marc Gastonguay. *PAGE*. 2004.
+[^5]: Marc Gastonguay. *PAGE*. 2004.
 
 -   Develop a stable base model.
 
@@ -324,9 +327,9 @@ Full fixed-effect modeling (FFEM)[^4] procedure:
 
 ## **Thoughful** considerations {style="font-size: 1em"}
 
-Incorporate covariate effects in the model based on[^5]:
+Incorporate covariate effects in the model based on[^6]:
 
-[^5]: Marc Gastonguay. *PAGE*. 2004.
+[^6]: Marc Gastonguay. *PAGE*. 2004.
 
 -   Scientific and clinical interest.
 -   Mechanistic plausibility.
@@ -407,9 +410,9 @@ $$
 VIF_i = \frac{1}{1-R_i^2}
 $$
 
-For a general covariate with $\geq1$ degree of freedom ($df_i$)[^6]:
+For a general covariate with $\geq1$ degree of freedom ($df_i$)[^7]:
 
-[^6]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
+[^7]: df: degrees of freedom of a covariate; GVIF: generalized VIF (raw, not directly comparable across covariates with different df); aGVIF: adjusted GVIF (comparable across covariate with different df)
 
 $$
 GVIF_i = \frac{det(V_{jj})}{det(V_{jj}^*)} \\
@@ -469,9 +472,9 @@ vif_reduce
 :::
 :::
 
-## Construct FFEM[^7] {style="font-size: 1em"}
+## Construct FFEM[^8] {style="font-size: 1em"}
 
-[^7]: Marc Gastonguay. *PAGE*. 2004.
+[^8]: Marc Gastonguay. *PAGE*. 2004.
 
 $$
 TVP = \theta_n \times \prod_{1}^{m} (\frac{COV_{mi}}{ref_m})^{\theta_(m+n)}\times \prod_{1}^{p}\theta_{p+m+n}^{COV_{pi}}
@@ -498,9 +501,9 @@ $$
 
 ![](./pics/forest-plot.png)
 
-## Pros and Cons of selection methods[^8] {style="font-size: 1em"}
+## Pros and Cons of selection methods[^9] {style="font-size: 1em"}
 
-[^8]: Niclas Jonsson and Joakim Nyberg. *ACoP*. 2025.
+[^9]: Niclas Jonsson and Joakim Nyberg. *ACoP*. 2025.
 
 -   Pros:
     -   Widely used.
@@ -514,9 +517,9 @@ $$
     -   Problematic inference due to multiple testing (arbitrary P value cut-off).
     -   Long run-times (i.e., computationally expansive).
 
-## Pros and Cons of Pre-defined methods[^9]
+## Pros and Cons of Pre-defined methods[^10]
 
-[^9]: Marc Gastonguay. *PAGE*. 2004.
+[^10]: Marc Gastonguay. *PAGE*. 2004.
 
 ::: columns
 ::: {.column width="50%"}

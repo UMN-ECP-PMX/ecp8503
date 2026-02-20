@@ -4,6 +4,7 @@ author: "Shen Cheng"
 date: today
 format: 
   revealjs: 
+    transition: none
     smaller: true
     scrollable: true
     embed-resources: true

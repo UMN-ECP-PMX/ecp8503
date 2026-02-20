@@ -96,7 +96,7 @@ Back-transform model parameters for **interpretability**
 
         -   Commonly use, natural bound of 0.
 
-        -   NONMEM: `CL=EXP(THETA(1))`.
+        -   NONMEM: `CL=EXP(THETA(1)+ETA(1))`.
 
         -   Back-transform: report $e^{\theta_1}$ instead of $\theta_1$.
 
@@ -104,7 +104,7 @@ Back-transform model parameters for **interpretability**
 
         -   Commonly use, natural bounds between 0 and 1.
 
-        -   NONMEM: `F=EXP(THETA(1))/(EXP(THETA(1)+1))`.
+        -   NONMEM: `F=EXP(THETA(1)+ETA(1))/(EXP(THETA(1)+ETA(1))+1)`.
 
         -   Back-transform: report $\frac{e^{\theta_1}}{e^{\theta_1}+1}$ instead of $\theta_1$.
 
@@ -129,9 +129,9 @@ If a parameter is modeled in
 
 -   Normal scale: $RSE=\frac{SE}{\hat{\theta}} \times 100\%$[^4]
 
--   Log scale: $RSE=sqrt(e^{diag}-1)$
+-   Log scale: $RSE=sqrt(e^{SE^2}-1)$
 
-    -   $diag$: a diagonal element of the covariance matrix (i.e., variance of an uncertainty distribution).
+    <!-- -   $diag$: a diagonal element of the covariance matrix (i.e., variance of an uncertainty distribution). -->
 
 -   Logit scale:
 
@@ -240,7 +240,7 @@ $$
 \end{bmatrix}
 $$
 
--   Example: $Corr_{(\omega^2_{CL/F},\omega^2_{V2/F})}=\frac{0.0703}{sqrt(0.114) \times sqrt(0.0824)}=0.0725$
+-   Example: $Corr_{(\omega^2_{CL/F},\omega^2_{V2/F})}=\frac{0.0703}{sqrt(0.114) \times sqrt(0.0824)}=0.725$
 :::
 :::
 

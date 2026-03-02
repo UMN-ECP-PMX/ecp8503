@@ -1,0 +1,337 @@
+---
+title: "Exploratory Data Analysis - nmdat1.csv"
+format: 
+  html: 
+    toc: true
+    number-sections: true
+    embed-resources: true
+---
+
+
+```{r}
+#| warning: false
+#| message: false
+.libPaths("~/renv/renv/library/R-4.5/aarch64-apple-darwin20/")
+library(pmplots)
+library(pmtables)
+library(yspec)
+library(dplyr)
+library(here)
+library(ggplot2)
+library(data.table)
+library(lastdose)
+library(yspec)
+library(patchwork)
+```
+
+```{r}
+#| echo: false
+theme_set(theme_bw() + theme(legend.position = "top"))
+options(ggplot2.discrete.colour = RColorBrewer::brewer.pal(name = "Dark2", n = 8))
+options(ggplot2.discrete.fill = RColorBrewer::brewer.pal(name = "Dark2", n = 8))
+```
+
+
+```{r}
+full <- fread(here("model1/data/nmdat1.csv"), na.strings = ".")
+```
+
+The data spec will help us format tables and figures
+```{r}
+spec <- ys_load(here("wk02/nmdat1.yaml"))
+
+table <- ys_get_short_unit(spec)
+full <- ys_factors(full, spec, GENO, SEX, DOSE)
+```
+
+Calculate time after last dose
+```{r}
+full <- lastdose(full)
+
+head(full)
+```
+
+```{r}
+count(full, OCC)
+```
+
+
+# Get Started
+
+
+## Basic inventory of the data
+
+- Include all observation records (`EVID==0`) _and_ any `BLQ` records.
+- I'm stratifying (or splitting) the data by all the categorical covariates
+  I see in the data.
+- We also get the inventory for all the data.
+
+```{r}
+data <- filter(full, EVID==0)
+
+pt_inventory_long(
+  data, 
+  cols = c("DOSE", "GENO", "SEX"), 
+  table = table
+) %>% st_as_image()
+```
+
+
+
+## Make a simple plot
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5
+ggplot(data, aes(TIME, DV)) + geom_point()
+```
+
+
+## Customize the plot
+
+- I like to update the x-axis tick labels to be more intuitive
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5
+ggplot(data, aes(TIME, DV)) + geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4))
+```
+
+- And we frequently would rater see this on log scale
+```{r}
+
+#| fig-width: 7
+#| fig-height: 5
+ggplot(data, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10()
+```
+
+- I like to have a tick label _above_ the highest observation
+
+```{r}
+ggplot(data, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(NA, 10000))
+```
+
+- Let's drop the BLQ observations
+
+
+```{r}
+obs <- filter(data, BLQ==0)
+
+ggplot(obs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(30, 10000))
+```
+
+
+- Let's give this proper labels
+
+```{r}
+ggplot(obs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(30, 10000)) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)")
+```
+
+## Do you want to know more about absorption?
+
+Make a view specific for that question
+
+```{r}
+abs <- filter(obs, TIME < 8)
+ggplot(abs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,8,2)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(30, 10000)) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)")
+```
+
+
+# Dig deeper into the covariates
+
+- First, get a data set with baseline covariates
+
+```{r}
+id <- 
+  obs %>% 
+  slice(1, .by = ID) %>% 
+  mutate(across(c(SEX, DOSE, GENO), ~ factor(.x)))
+```
+
+
+## Covariates - tabular summary
+
+```{r}
+pt_demographics(
+  id, 
+  cols_cat = c("SEX", "GENO"), 
+  cols_cont = c("ALB", "WT", "AGE", "EGFR"),
+  span = c("Demothizine dose" = "DOSE"), 
+  table = table
+) %>% st_as_image()
+```
+
+```{r}
+pt_demographics(
+  id, 
+  cols_cat = c("SEX", "DOSE"), 
+  cols_cont = c("ALB", "WT", "AGE", "EGFR"),
+  span = c(Genotype = "GENO"), 
+  table = table
+) %>% st_as_image()
+```
+
+## Covariates - graphical summary
+
+
+```{r}
+pl <- list_plot_x(
+  id,
+  x = c("SEX", "DOSE", "GENO"), 
+  y = c("ALB", "WT", "BSA", "EGFR"), 
+  .fun = cont_cat
+)
+pl <- lapply(pl, pm_grid, ncol = 2)
+pl
+```
+
+- What's the difference with these plots?
+
+```{r}
+pl <- list_plot_y(
+  id,
+  x = c("SEX", "DOSE", "GENO"), 
+  y = c("ALB", "WT", "BSA", "EGFR"), 
+  .fun = cont_cat
+)
+pl <- lapply(pl, pm_grid, ncol = 2)
+pl
+```
+
+## Covariates - correlations
+
+```{r}
+#| fig-width: 6
+#| fig-height: 6
+#| warning: false
+y <- 
+  spec %>% 
+  ys_namespace("plot") %>% 
+  axis_col_labs(vars(ALB, WT, AGE, EGFR))
+
+pairs_plot(id, y = y)
+```
+
+# How does PK differ across different covariates?
+
+
+## By dose
+
+```{r}
+#| fig-width: 9
+#| fig-height: 5
+ggplot(obs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(30, 10000)) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)") + 
+  facet_grid(~DOSE)
+```
+
+- I wouldn't rely on color to separate the data
+
+```{r}
+ggplot(obs, aes(TIME, DV, col = factor(DOSE))) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(30, 10000)) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)")
+```
+
+## By genotype
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 7
+ggplot(obs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(30, 10000)) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)") + 
+  facet_grid(DOSE~GENO)
+```
+
+```{r}
+#| fig-width: 8
+#| fig-height: 7
+ggplot(obs, aes(TIME, DV)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = seq(0,52,4)) + 
+  scale_y_log10(breaks = logbr3(), limits = c(30, 10000)) + 
+  geom_hline(yintercept = c(300, 1000, 3000), lty = 2) + 
+  labs(x = "Time (h)", y = "Demothizine concentration (ng/mL)") + 
+  facet_grid(DOSE~GENO)
+```
+
+
+## Try boxplots at a nominal time point for categorical covariates
+
+
+```{r}
+#| fig-width: 7
+#| fig-height: 5
+cmin <- filter(data, TIME > 20 & TIME < 25)
+
+ggplot(cmin) + 
+  geom_boxplot(aes(x = factor(GENO), y = DV)) + 
+  scale_y_log10() + 
+  facet_wrap(~DOSE) + 
+  labs(y = "Demothizine concentration (ng/mL)", x = "Genotype")
+```
+
+### Do we see the same by SEX?
+
+```{r}
+ggplot(cmin) + 
+  geom_boxplot(aes(x = factor(SEX), y = DV)) + 
+  scale_y_log10() + 
+  facet_wrap(~DOSE) + 
+  labs(y = "Demothizine concentration (ng/mL)", x = "Sex")
+```
+
+## What about continuous?
+
+```{r}
+#| message: false
+ggplot(cmin, aes(x = EGFR, y = DV)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+
+```{r}
+#| fig-width: 7
+#| fig-height: 7
+#| message: false
+xx <- axis_col_labs(spec, vars(EGFR, ALB, WT, AGE))
+
+p <- cont_cont(
+  cmin, 
+  x = xx, 
+  y = "DV//Demothizine Cmin (ng/mL)", 
+  ys = list(limits = c(0, NA))
+) 
+
+p <- lapply(p, layer_s)
+
+pm_grid(p) + plot_layout(axes = "collect")
+```

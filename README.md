@@ -16,9 +16,9 @@
 | 06 (02/27/2026)  | Parameter uncertainty                                | Shen Cheng, PhD                  |
 | 07 (03/06/2026)  | Model evaluations                                    | Kyle Baron, PharmD, PhD          |
 | 08 (03/13/2026)  | **SPRING BREAK**                                     |                                  |
-| 09 (03/20/2026)  | PMx reporting                                        | Mutaz Jaber, PharmD, PhD         |
+| 09 (03/20/2026)  | BQL                                                  | Shen Cheng, PhD                  |
 | 10 (03/27/2026)  | NONMEM OFV (ELS)                                     | Richard Brundage, PharmD, PhD    |
-| 11 (04/03/2026)  | BQL                                                  | Shen Cheng, PhD                  |
+| 11 (04/03/2026)  | PMx reporting                                        | Mutaz Jaber, PharmD, PhD         |
 | 12 (04/10/2026)  | PKPD modeling startegies                             | Samuel Callisto, PhD             |
 | 13 (04/17/2026)  | Mixture modeling                                     | Richard Brundage, PharmD, PhD    |
 | 14 (04/24/2026)  | Estimation methods                                   | Samuel Callisto, PhD             |

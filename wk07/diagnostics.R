@@ -38,19 +38,27 @@ c <- fread(here("wk07/model/106/106par.tab"), skip = 1)
 
 nm <- left_join(b,c) %>% left_join(a)
 
+datax <- filter(nm, EVID==0)
+idx <- slice(datax, 1, .by = ID)
+
 data <- filter(nm, EVID==0, STUDYN %in% c(1,4))
 id <- slice(data, 1, .by = ID)
 
 data2 <- filter(nm, EVID==0, STUDYN==3)
 id2 <- slice(data2, 1, .by = ID)
 
-wrap_dv_preds(data)
-mrggsave_last(stem = "dv-pred", width = 7, height = 3, labeller = NULL)
+wrap_dv_preds(data0)
+mrggsave_last(stem = "dv-pred-base", width = 7, height = 3, labeller = NULL)
 
 dv_pred(data0, scales = "free") + 
   facet_wrap(~RF, scales = "free", ncol = 2)
 
 mrggsave_last(stem = "dv-pred-base-egfr", width = 9, height = 6, labeller = NULL)
+
+dv_pred(datax, scales = "free") + 
+  facet_wrap(~RF, scales = "free", ncol = 2)
+
+mrggsave_last(stem = "dv-pred-final-egfr", width = 9, height = 6, labeller = NULL)
 
 
 res_time(data) + wres_time(data) + cwres_time(data) + npde_time(data)

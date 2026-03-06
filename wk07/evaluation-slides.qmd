@@ -11,13 +11,17 @@ format:
 #   enabled: false
 ---
 
-# Diagnostics - DV vs PRED/IPRED
+# Diagnostics - DV vs PRED/IPRED - Base model
 
-![](assets/dv-pred.png){fig-align="center"}
+![](assets/dv-pred-base.png){fig-align="center"}
 
-# Diagnostics - DV~PRED/IPRED - Base Model
+# Diagnostics - DV~PRED/IPRED - Base, by eGFR
 
 ![](assets/dv-pred-base-egfr.png){fig-align="center"}
+
+# Diagnostics - DV~PRED/IPRED - Final, by eGFR
+
+![](assets/dv-pred-final-egfr.png){fig-align="center"}
 
 
 # Diagnostics - Residuals versus TIME

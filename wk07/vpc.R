@@ -17,14 +17,22 @@ mrg_vpc_theme = new_vpc_theme(list(
   sim_median_fill = "grey60", sim_median_alpha = 0.3
 ))
 
+nm <- fread(here("wk07/model/106/106.tab"), na.strings = ".")
 
 mod <- mread(here("wk07/model/106.txt"))
 
 data <- fread(here("wk07/data/analysis3.csv"), na.strings = ".")
 data <- mutate(data, DVN = DV/DOSE)
+data <- mutate(
+  data, 
+  RF = factor(RF, levels = c("norm", "mild", "mod", "sev"))
+)
+
+data <- left_join(select(nm, NUM, PRED), data)
+
 
 sims <- lapply(seq(300), \(x) {
-  mrgsim(mod, data, recover = "DOSE,DVN,EVID,STUDY,STUDYN") %>% 
+  mrgsim(mod, data, recover = "DOSE,DVN,EVID,STUDY,STUDYN,RF,PRED") %>% 
     mutate(irep = x, YN = Y / DOSE)
 }) %>% bind_rows()
 
@@ -142,3 +150,61 @@ p4 <-
 p4
 
 mrggsave(p4, stem = "study-4-boxes-bin", labeller = NULL)
+
+
+# All data
+
+O <- filter(fdata, STUDYN > 0, TIME <= 24)
+S <- filter(fsims, STUDYN > 0, TIME <= 24)
+
+p5 <- vpc(
+  obs = O,
+  sim = S,
+  stratify = "RF",
+  obs_cols = list(dv = "DV"),
+  sim_cols = list(dv = "Y", sim = "irep"), 
+  log_y = TRUE,
+  pi = c(0.05, 0.95),
+  ci = c(0.025, 0.975), 
+  facet = "rows",
+  smooth = FALSE,
+  bins = "time", 
+  pred_corr = TRUE,
+  show = list(obs_dv = FALSE), 
+  vpc_theme = mrg_vpc_theme
+) 
+
+p5 <- 
+  p5 +  theme_bw() + 
+  ylab("Prediction-corrected\ndemothizone concentration (ng/mL)") + 
+  xlab("Time after first dose (h)")
+
+p5
+
+mrggsave(p5, stem = "vpc-by-rf", labeller = NULL, width = 9, height = 4)
+
+# 
+# p6 <- vpc(
+#   obs = O,
+#   sim = S,
+#   stratify = "RF",
+#   obs_cols = list(dv = "DV"),
+#   sim_cols = list(dv = "Y", sim = "irep"), 
+#   log_y = TRUE,
+#   pi = c(0.05, 0.95),
+#   ci = c(0.025, 0.975), 
+#   facet = "wrap",
+#   smooth = FALSE,
+#   bins = "time", 
+#   show = list(obs_dv = FALSE), 
+#   vpc_theme = mrg_vpc_theme
+# ) 
+# 
+# p6 <- 
+#   p6 +  theme_bw() +
+#   ylab("Demothizone concentration (ng/mL)") + 
+#   xlab("Time (h)")
+# 
+# p6
+# 
+# mrggsave(p6, stem = "vpc-by-rf-median", labeller = NULL)

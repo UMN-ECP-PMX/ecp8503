@@ -108,7 +108,7 @@ npde_q(long, x = "value") + facet_wrap(~name, ncol = 3)
 mrggsave_last(stem = "eta-q", width = 9, height = 4, labeller = NULL)
 
 
-eta_covariate(id0, x = c("EGFR", "RF", "WT", "DOSE"), 
+eta_covariate(idx, x = c("EGFR", "RF", "WT", "DOSE"), 
               y = "ETA3//ETA-CL", ncol = 2) %>% rot_xy()
 mrggsave_last(stem = "eta-covariate-base", width = 9, height = 6, labeller = NULL)
 

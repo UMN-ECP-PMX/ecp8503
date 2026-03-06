@@ -1,7 +1,11 @@
 ---
-title: "Model Evaluation - Diagnostics and VPC"
+title: "Model Evaluation:<BR>Diagnostics and VPC"
+subtitle: ECP 8503 Week 7
+author: Kyle Baron
+date: March 6, 2026
 format: 
   revealjs: 
+    header: ECP 8503 Week 7 Model Evaluation
     embed-resources: true
     css: assets/styles.css
     width: 1600
@@ -11,70 +15,125 @@ format:
 #   enabled: false
 ---
 
-# Diagnostics - DV vs PRED/IPRED - Base model
+# Model Evaluation
+
+- Descriptive: how well did I describe the data set I have?
+- Predictive: how will this model do for predicting new data?
+
+## DV vs PRED/IPRED - Base model
 
 ![](assets/dv-pred-base.png){fig-align="center"}
 
-# Diagnostics - DV~PRED/IPRED - Base, by eGFR
+## DV~PRED/IPRED - Base, by eGFR
 
 ![](assets/dv-pred-base-egfr.png){fig-align="center"}
 
-# Diagnostics - DV~PRED/IPRED - Final, by eGFR
+##  DV~PRED/IPRED - Final, by eGFR
 
 ![](assets/dv-pred-final-egfr.png){fig-align="center"}
 
 
-# Diagnostics - Residuals versus TIME
+## Residuals versus TIME
 
 ![](assets/cwres-npde-time.png){fig-align="center"}
 
-# Diagnostics - Residuals versus PRED
+## Residuals {style="margin-top: -30px; font-size: 0.8em;"}
+
+
+**Residuals (RES)**
+
+$$\mathrm{RES}_\mathrm{ij} = \mathrm{DV}_\mathrm{ij} - \mathrm{PRED}_\mathrm{ij}$$
+
+**Weighted Residuals (WRES)**
+
+$$\mathrm{WRES}_\mathrm{ij} = \frac{DV_\mathrm{ij} - \mathrm{PRED}_\mathrm{ij}}{\sqrt{Var(\mathrm{DV}_\mathrm{ij})}}$$
+
+**Conditional Weighted Residuals (CWRES)**
+
+$$\mathrm{CWRES}_\mathrm{ij} = \frac{\mathrm{DV}_\mathrm{ij} - \mathrm{EPRED}_\mathrm{ij}}{\sqrt{Var(\mathrm{DV}_\mathrm{ij} \mid \hat{\eta}_i)}}$$
+
+
+Where $i$ indexes the individual, $j$ indexes the observation within individual $i$,
+and $\hat{\eta}_i$ are the empirical Bayes estimates of the random effects for individual $i$.
+
+**Expected Prediction (EPRED)**
+
+$$\mathrm{EPRED}_\mathrm{ij} = f(x_\mathrm{ij}, \theta, \hat{\eta}_i)$$
+
+Where $f$ is the structural model, $x_{ij}$ is the design vector for individual $i$ observation $j$,
+$\theta$ are the fixed-effect parameters, and $\hat{\eta}_i$ are the empirical Bayes estimates for individual $i$.
+
+## Normalized prediction distribution errors (NPDE)  {style="margin-top: -30px; font-size: 0.8em;"}
+
+**Simulate from the model**
+
+$$DV_\mathrm{ij}^{(k)} \sim f(x_\mathrm{ij}, \theta, \eta_i^{(k)}, \epsilon_\mathrm{ij}^{(k)}), \quad k = 1, \dots, K$$
+
+**Compute the predictive CDF for each observation**
+
+$$\mathrm{pde}_\mathrm{ij} = \frac{1}{K} \sum_{k=1}^{K} \mathbf{I}\left(DV_\mathrm{ij}^{(k)} \leq DV_\mathrm{ij}\right)$$
+
+This is `pde` when calculated with decorrelated data. 
+
+**Transform to normality**
+
+$$\mathrm{NPDE}_\mathrm{ij} = \Phi^{-1}(p_\mathrm{ij})$$
+
+**Under a correctly specified model**
+
+$$\mathrm{pde}_{ij} \sim \operatorname{U}(0, 1)$$
+
+$$\mathrm{NPDE}_\mathrm{ij} \sim \operatorname{N}(0, 1)$$
+
+
+
+## Residuals versus PRED
 
 ![](assets/cwres-npde-pred.png){fig-align="center"}
 
 
-# Diagnostics - NPDE distrbution
+## NPDE distrbution
 
 ![](assets/npde-hist.png){fig-align="center"}
 
 
-# Diagnostics - NPDE non-normal
+## NPDE non-normal
 
 ![](assets/npde-hist-non.png){fig-align="center"}
 
 
-# Diagnostics - NPDE covariate
+## NPDE covariate
 
 ![](assets/npde-covariate.png){fig-align="center"}
 
 
-# Diagnostics - NPDE covariate base model
+## NPDE covariate base model
 
 ![](assets/npde-covariate-base.png){fig-align="center"}
 
-# Diagnostics - ETA histogram
+## ETA histogram
 
 ![](assets/eta-histogram.png){fig-align="center"}
 
 
 
-# Diagnostics - ETA covariates
+## ETA covariates   {style="margin-top: -30px; font-size: 0.8em;"}
 
 ![](assets/eta-covariate-base.png){fig-align="center"}
 
 
-# Diagnostics - ETA  pairs
+## ETA  pairs
 
 ![](assets/eta-pairs.png){fig-align="center"}
 
 
 
 
-# Out of the box VPC
+## Out of the box VPC {style="font-size: 0.9em;"}
 
 ::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="40%"}
 
 - Observed data
   - Observed data points
@@ -85,9 +144,15 @@ format:
   - Simulated median
   - Simulated 5th and 95th percentiles
 
+::: {.callout-tip title="What questions do VPCs answer?"}
+* Are data simulated from the model similar to our observed data?
+
+* Could our model have generated the data we observed in our study?
 :::
 
-::: {.column width="50%"}
+:::
+
+::: {.column width="60%"}
 
 ![](assets/study-4.png){fig-align="center"}
 
@@ -95,28 +160,43 @@ format:
 
 :::
 
+## (Visual) predictive check steps
 
-# VPC showing bins
+1. Fit a model to a data set
+2. Using the _same_ data design, simulate replicate outcomes (PK) from the model
+    a. Same people
+    b. Same dosing
+    c. Same observation times
+3. Calculate statistics on simulated and observed data
+    a. Single number for observed (N = 1)
+    b. Replicate numbers for simulated (N = 500 or 1,000)
+    c. Requires "bins" for VPC
+4. Compare observed data statistic (singular) with the distribution of simulated statistics (plural)
+
+
+
+
+## VPC showing bins
 
 ![](assets/study-4-boxes.png){fig-align="center"}
 
 
-# VPC dropping observed data points
+## VPC dropping observed data points
 
 ![](assets/study-4-boxes-noobs.png){fig-align="center"}
 
 
-# VPC different bins
+## VPC different bins
 
 ![](assets/study-4-boxes-bin.png){fig-align="center"}
 
 
-# Landmark predcheck - histogram
+## Landmark predcheck - histogram
 
 ![](assets/pk-pcheck-final-auc-pcheck.png){fig-align="center"}
 
 
-# Landmark predcheck - QQ
+## Landmark predcheck - QQ
 
 ![](assets/pk-pcheck-final-cmin-pcheck.png){fig-align="center"}
 

@@ -275,7 +275,7 @@ typical prediction for that individual observation:
 
 $$\mathrm{pcDV}_\mathrm{ij} = \mathrm{DV}_\mathrm{ij} \times \frac{\mathrm{PRED}_\mathrm{bin}}{\mathrm{PRED}_\mathrm{ij}}$$
 
-$$\mathrm{pcDV}_\mathrm{ij}^{(k)} = DV_\mathrm{ij}^{(k)} \times \frac{PRED_\mathrm{bin}}{PRED_\mathrm{ij}^{(k)}}$$
+$$\mathrm{pcDV}_\mathrm{ij}^{(k)} = \mathrm{DV}_\mathrm{ij}^{(k)} \times \frac{\mathrm{PRED}_\mathrm{bin}}{\mathrm{PRED}_\mathrm{ij}^{(k)}}$$
 
 - Allows you to group data with different expected values (e.g., group subjects getting very different dodse)
 - Needs PRED from NONMEM; be sure to carry that into the data set you are using to simulate / summarize the VPC

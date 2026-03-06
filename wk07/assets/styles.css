@@ -1,0 +1,41 @@
+.reveal .title-slide h1 {
+  font-size: 1.5em !important;
+}
+.reveal section p,
+.reveal section li {
+  font-size: 1.0em;
+}
+
+/* Code */
+.reveal pre code {
+  font-size: 0.9em;
+}
+
+.compact {
+  font-size: 0.7em
+}
+
+.compact p,
+.compact ul li,
+.compact ol li {
+  margin-bottom: 0.2em;
+}
+
+.compact .math.display {
+  margin: 0.3em 0;
+}
+
+.reveal .slide-logo {
+  max-height: 120px !important;
+  max-width: 200px !important;
+  height: 100px !important;
+  width: auto !important;
+}
+
+.reveal h1 {
+  color: #7A0019;  /* title slide */
+}
+
+.reveal h2 {
+  color: #7A0019;  /* slide titles */
+}

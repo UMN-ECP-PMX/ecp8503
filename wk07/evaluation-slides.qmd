@@ -31,6 +31,11 @@ format:
 
 ![](assets/dv-pred-base.png){fig-align="center"}
 
+
+## DV vs PRED/IPRED - Base model, log scale
+
+![](assets/dv-pred-base-log.png){fig-align="center"}
+
 ## DV~PRED/IPRED - Base, by Renal Function Group
 
 ![](assets/dv-pred-base-egfr.png){fig-align="center"}

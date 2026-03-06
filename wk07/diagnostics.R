@@ -50,6 +50,10 @@ id2 <- slice(data2, 1, .by = ID)
 wrap_dv_preds(data0)
 mrggsave_last(stem = "dv-pred-base", width = 7, height = 3, labeller = NULL)
 
+wrap_dv_preds(data0, loglog = TRUE)
+mrggsave_last(stem = "dv-pred-base-log", width = 7, height = 3, labeller = NULL)
+
+
 dv_pred(data0, scales = "free") + 
   facet_wrap(~RF, scales = "free", ncol = 2)
 

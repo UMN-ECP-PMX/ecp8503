@@ -245,6 +245,7 @@ Special considerations:
 
 - Titrated doses
 - Dropout
+- BLQ
 
 :::
 
@@ -266,6 +267,23 @@ Special considerations:
 
 ![](assets/study-4-boxes-bin.png){fig-align="center"}
 
+## Prediction-corrected VPC
+
+Observed and simulated values are scaled by the ratio of the typical population 
+prediction at the median independent variable value within each bin to the 
+typical prediction for that individual observation:
+
+$$\mathrm{pcDV}_\mathrm{ij} = \mathrm{DV}_\mathrm{ij} \times \frac{\mathrm{PRED}_\mathrm{bin}}{\mathrm{PRED}_\mathrm{ij}}$$
+
+$$\mathrm{pcDV}_\mathrm{ij}^{(k)} = \mathrm{DV}_\mathrm{ij}^{(k)} \times \frac{\mathrm{PRED}_\mathrm{bin}}{\mathrm{PRED}_\mathrm{ij}^{(k)}}$$
+
+- Allows you to group data with different expected values (e.g., group subjects getting very different dodse)
+- Needs PRED from NONMEM; be sure to carry that into the data set you are using to simulate / summarize the VPC
+
+
+## Pred-corrected VPC by Renal Impairment Group
+
+![](assets/vpc-by-rf.png){fig-align="center"}
 
 ## Landmark predcheck - histogram
 

@@ -16,7 +16,7 @@ format:
 #   enabled: false
 ---
 
-# Model Evaluation
+## Model Evaluation
 
 - Descriptive: how well did I describe the data set I have?
 - Predictive: how will this model do for predicting new data?

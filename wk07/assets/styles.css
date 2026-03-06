@@ -31,3 +31,11 @@
   height: 100px !important;
   width: auto !important;
 }
+
+.reveal h1 {
+  color: #7A0019;  /* title slide */
+}
+
+.reveal h2 {
+  color: #7A0019;  /* slide titles */
+}

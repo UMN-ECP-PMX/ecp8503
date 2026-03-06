@@ -20,6 +20,13 @@ format:
 - Descriptive: how well did I describe the data set I have?
 - Predictive: how will this model do for predicting new data?
 
+<hr>
+
+- Help decide what to try next in modeling
+- Help create a "case" for the final model
+  - Multifaceted
+  - Consider totality of evidence
+
 ## DV vs PRED/IPRED - Base model
 
 ![](assets/dv-pred-base.png){fig-align="center"}
@@ -87,6 +94,22 @@ $$\mathrm{NPDE}_\mathrm{ij} \sim \operatorname{N}(0, 1)$$
 
 - NONMEM limts $\mathrm{pde}_\mathrm{ij}$ to be  $>$ 0 and $<$ 1 (strictly)
 - NPDE cannot be beyond $\pm$ 3.29.
+
+
+## Residuals versus Time After Dose
+
+![](assets/cwres-npde-tad.png){fig-align="center"}
+
+
+## Residuals versus TAD - first 24 hours
+
+![](assets/cwres-npde-tad24.png){fig-align="center"}
+
+
+## Residuals versus TAD - first 24 hours, SAD
+
+![](assets/cwres-npde-tad24b.png){fig-align="center"}
+
 
 ## Residuals versus PRED
 
@@ -235,6 +258,18 @@ Special considerations:
 ## Landmark predcheck - QQ
 
 ![](assets/pk-pcheck-final-cmin-pcheck.png){fig-align="center"}
+
+## Diagnostics and predictive checks in model development
+
+- Start creating both GOF and VPC early; don't wait till your final model
+- Use them to help guide model development decisions
+  - Contrast with "I want to show that this is the right model"
+- Predictive checks show you where the model does well and where it doesn't
+  - Predictive checks (VPC) won't be perfect
+  - You might not be able to "fix" every imperfection
+- Model selection should consider both diagnostics and pred checks
+  - It can frequently be difficult to decide
+  - I would "prefer" predictive checks among the evidence base
 
 ## References
 

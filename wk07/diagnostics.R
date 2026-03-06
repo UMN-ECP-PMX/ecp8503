@@ -61,11 +61,24 @@ dv_pred(datax, scales = "free") +
 mrggsave_last(stem = "dv-pred-final-egfr", width = 9, height = 6, labeller = NULL)
 
 
-res_time(data) + wres_time(data) + cwres_time(data) + npde_time(data)
+res_time(data0) + wres_time(data0) + cwres_time(data0) + npde_time(data0)
 mrggsave_last(stem = "cwres-npde-time", width = 9, height = 6, labeller = NULL)
 
-res_pred(data) + wres_pred(data) + cwres_pred(data) +  npde_pred(data)
+res_tad(data0) + wres_tad(data0) + cwres_tad(data0) + npde_tad(data0)
+mrggsave_last(stem = "cwres-npde-tad", width = 9, height = 6, labeller = NULL)
+
+data24 <- filter(data0, TAD <= 24)
+res_tad(data24) + wres_tad(data24) + cwres_tad(data24) + npde_tad(data24)
+mrggsave_last(stem = "cwres-npde-tad24", width = 9, height = 6, labeller = NULL)
+
+data24b <- filter(data, TAD <= 24)
+res_tad(data24b) + wres_tad(data24b) + cwres_tad(data24b) + npde_tad(data24b)
+mrggsave_last(stem = "cwres-npde-tad24b", width = 9, height = 6, labeller = NULL)
+
+
+res_pred(data0) + wres_pred(data0) + cwres_pred(data0) +  npde_pred(data0)
 mrggsave_last(stem = "cwres-npde-pred", width = 9, height = 6, labeller = NULL)
+
 
 npde_hist_q(data, ncol = 2)
 mrggsave_last(stem = "npde-hist", width = 8, height = 4, labeller = NULL)

@@ -5,7 +5,8 @@ author: Kyle Baron
 date: March 6, 2026
 format: 
   revealjs: 
-    header: ECP 8503 Week 7 Model Evaluation
+    slide-number: true
+    logo: assets/logo2.png
     embed-resources: true
     css: assets/styles.css
     width: 1600
@@ -26,6 +27,9 @@ format:
 - Help create a "case" for the final model
   - Multifaceted
   - Consider totality of evidence
+- Make your "case" for
+  - You, the modeler
+  - Others, consumers of the model
 
 ## DV vs PRED/IPRED - Base model
 
@@ -58,7 +62,7 @@ $$\mathrm{RES}_\mathrm{ij} = \mathrm{DV}_\mathrm{ij} - \mathrm{PRED}_\mathrm{ij}
 
 **Weighted Residuals (WRES)**
 
-$$\mathrm{WRES}_\mathrm{ij} = \frac{DV_\mathrm{ij} - \mathrm{PRED}_\mathrm{ij}}{\sqrt{Var(\mathrm{DV}_\mathrm{ij})}}$$
+$$\mathrm{WRES}_\mathrm{ij} = \frac{DV_\mathrm{ij} - \mathrm{PRED}_\mathrm{ij}}{\sqrt{Var(\mathrm{DV}_\mathrm{ij})}} = \frac{\mathrm{RES}_\mathrm{ij}}{\sqrt{Var(\mathrm{DV}_\mathrm{ij})}}$$
 
 **Conditional Weighted Residuals (CWRES)**
 
@@ -87,6 +91,7 @@ $$\mathrm{pde}_\mathrm{ij} = \frac{1}{K} \sum_{k=1}^{K} \mathbf{I}\left(DV_\math
 
 $$\text{(when calculated with decorrelated data.)}$$
 
+**Normalize**
 $$\mathrm{NPDE}_\mathrm{ij} = \Phi^{-1}(p_\mathrm{ij})$$
 
 **Under a correctly specified model**
@@ -181,6 +186,13 @@ $$\mathrm{NPDE}_\mathrm{ij} \sim \operatorname{N}(0, 1)$$
 * Are data simulated from the model similar to our observed data?
 
 * Could our model have generated the data we observed in our study?
+
+:::{style="border-top: 1px solid #ccc; margin: 0.5em 0;"}
+:::
+
+- Memorize
+- Be prepared to explain predictive checks to people in a single sentence
+
 :::
 
 :::

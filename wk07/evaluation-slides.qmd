@@ -24,11 +24,11 @@ format:
 
 ![](assets/dv-pred-base.png){fig-align="center"}
 
-## DV~PRED/IPRED - Base, by eGFR
+## DV~PRED/IPRED - Base, by Renal Function Group
 
 ![](assets/dv-pred-base-egfr.png){fig-align="center"}
 
-##  DV~PRED/IPRED - Final, by eGFR
+##  DV~PRED/IPRED - Final, by Renal Function Group
 
 ![](assets/dv-pred-final-egfr.png){fig-align="center"}
 
@@ -63,7 +63,7 @@ $$\mathrm{EPRED}_\mathrm{ij} = f(x_\mathrm{ij}, \theta, \hat{\eta}_i)$$
 Where $f$ is the structural model, $x_{ij}$ is the design vector for individual $i$ observation $j$,
 $\theta$ are the fixed-effect parameters, and $\hat{\eta}_i$ are the empirical Bayes estimates for individual $i$.
 
-## Normalized prediction distribution errors (NPDE)  {style="margin-top: -30px; font-size: 0.8em;"}
+## Normalized prediction distribution errors (NPDE)  {.compact}
 
 **Simulate from the model**
 
@@ -73,9 +73,7 @@ $$DV_\mathrm{ij}^{(k)} \sim f(x_\mathrm{ij}, \theta, \eta_i^{(k)}, \epsilon_\mat
 
 $$\mathrm{pde}_\mathrm{ij} = \frac{1}{K} \sum_{k=1}^{K} \mathbf{I}\left(DV_\mathrm{ij}^{(k)} \leq DV_\mathrm{ij}\right)$$
 
-This is `pde` when calculated with decorrelated data. 
-
-**Transform to normality**
+$$\text{(when calculated with decorrelated data.)}$$
 
 $$\mathrm{NPDE}_\mathrm{ij} = \Phi^{-1}(p_\mathrm{ij})$$
 
@@ -85,7 +83,10 @@ $$\mathrm{pde}_{ij} \sim \operatorname{U}(0, 1)$$
 
 $$\mathrm{NPDE}_\mathrm{ij} \sim \operatorname{N}(0, 1)$$
 
+**Limits on NPDE**
 
+- NONMEM limts $\mathrm{pde}_\mathrm{ij}$ to be  $>$ 0 and $<$ 1 (strictly)
+- NPDE cannot be beyond $\pm$ 3.29.
 
 ## Residuals versus PRED
 
@@ -115,6 +116,10 @@ $$\mathrm{NPDE}_\mathrm{ij} \sim \operatorname{N}(0, 1)$$
 
 ![](assets/eta-histogram.png){fig-align="center"}
 
+## ETA Q-Q plot
+
+![](assets/eta-q.png){fig-align="center"}
+
 
 
 ## ETA covariates   {style="margin-top: -30px; font-size: 0.8em;"}
@@ -129,11 +134,11 @@ $$\mathrm{NPDE}_\mathrm{ij} \sim \operatorname{N}(0, 1)$$
 
 
 
-## Out of the box VPC {style="font-size: 0.9em;"}
+## Out of the box VPC {style="font-size: 0.8em;"}
 
 ::: {.columns}
 
-::: {.column width="40%"}
+::: {.column width="45%"}
 
 - Observed data
   - Observed data points
@@ -152,15 +157,20 @@ $$\mathrm{NPDE}_\mathrm{ij} \sim \operatorname{N}(0, 1)$$
 
 :::
 
-::: {.column width="60%"}
+::: {.column width="55%"}
 
-![](assets/study-4.png){fig-align="center"}
-
-:::
+![](assets/study-4.png){fig-align="center" width="80%"}
 
 :::
 
-## (Visual) predictive check steps
+:::
+
+## (Visual) predictive check steps {style="font-size: 0.9em;"}
+
+
+::: {.columns}
+
+::: {.column width="55%"}
 
 1. Fit a model to a data set
 2. Using the _same_ data design, simulate replicate outcomes (PK) from the model
@@ -173,7 +183,33 @@ $$\mathrm{NPDE}_\mathrm{ij} \sim \operatorname{N}(0, 1)$$
     c. Requires "bins" for VPC
 4. Compare observed data statistic (singular) with the distribution of simulated statistics (plural)
 
+:::
 
+::: {.column width="45%"}
+
+::: {.callout-note title="Always remember:"}
+Handle the replicate simulated data in the 
+
+- Exact.   
+
+- Same.    
+
+- Way.   
+
+that you handle the observed data.
+
+:::{style="border-top: 1px solid #ccc; margin: 0.5em 0;"}
+:::
+
+Special considerations: 
+
+- Titrated doses
+- Dropout
+
+:::
+
+:::
+:::
 
 
 ## VPC showing bins
@@ -199,4 +235,13 @@ $$\mathrm{NPDE}_\mathrm{ij} \sim \operatorname{N}(0, 1)$$
 ## Landmark predcheck - QQ
 
 ![](assets/pk-pcheck-final-cmin-pcheck.png){fig-align="center"}
+
+## References
+
+- Dykstra K, Mehrotra N, Tornøe CW, et al. (2015) Reporting guidelines for population pharmacokinetic analyses. Journal of pharmacokinetics and pharmacodynamics 42(3): 301–314.
+
+- Byon W, Smith MK, Chan P, et al. (2013) Establishing best practices and guidance in population modeling: an experience with an internal population pharmacokinetic analysis guidance. CPT: pharmacometrics & systems pharmacology 2: e51.
+
+- Population Pharmacokinetics Guidance for Industry February 2022
+  - <https://www.fda.gov/regulatory-information/search-fda-guidance-documents/population-pharmacokinetics>
 

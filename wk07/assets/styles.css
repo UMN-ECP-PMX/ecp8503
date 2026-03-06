@@ -11,3 +11,16 @@
   font-size: 0.9em;
 }
 
+.compact {
+  font-size: 0.7em
+}
+
+.compact p,
+.compact ul li,
+.compact ol li {
+  margin-bottom: 0.2em;
+}
+
+.compact .math.display {
+  margin: 0.3em 0;
+}

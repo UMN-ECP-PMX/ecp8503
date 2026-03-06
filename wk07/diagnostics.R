@@ -86,6 +86,11 @@ etas <- paste0("ETA", c(3,2,1), "//ETA-", c("CL", "V2", "KA"))
 eta_hist(id0, etas) %>% pm_grid(ncol = 3)
 mrggsave_last(stem = "eta-histogram", width = 9, height = 4, labeller = NULL)
 
+long <- pivot_longer(id0, all_of(paste0("ETA", c(3,2,1))))
+npde_q(long, x = "value") + facet_wrap(~name, ncol = 3)
+mrggsave_last(stem = "eta-q", width = 9, height = 4, labeller = NULL)
+
+
 eta_covariate(id0, x = c("EGFR", "RF", "WT", "DOSE"), 
               y = "ETA3//ETA-CL", ncol = 2) %>% rot_xy()
 mrggsave_last(stem = "eta-covariate-base", width = 9, height = 6, labeller = NULL)
@@ -93,3 +98,6 @@ mrggsave_last(stem = "eta-covariate-base", width = 9, height = 6, labeller = NUL
 
 eta_pairs(id0, etas)
 mrggsave_last(stem = "eta-pairs", width = 6, height = 6, labeller = NULL)
+
+
+

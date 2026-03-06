@@ -1,5 +1,5 @@
 ---
-title: "Data Set and Exploratory Data Analysis"
+title: "Model Evaluation - Diagnostics and VPC"
 format: 
   revealjs: 
     embed-resources: true
@@ -32,6 +32,11 @@ format:
 # Diagnostics - NPDE distrbution
 
 ![](assets/npde-hist.png){fig-align="center"}
+
+
+# Diagnostics - NPDE non-normal
+
+![](assets/npde-hist-non.png){fig-align="center"}
 
 
 # Diagnostics - NPDE covariate
@@ -101,4 +106,13 @@ format:
 
 ![](assets/study-4-boxes-bin.png){fig-align="center"}
 
+
+# Landmark predcheck - histogram
+
+![](assets/pk-pcheck-final-auc-pcheck.png){fig-align="center"}
+
+
+# Landmark predcheck - QQ
+
+![](assets/pk-pcheck-final-cmin-pcheck.png){fig-align="center"}
 

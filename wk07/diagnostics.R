@@ -45,28 +45,34 @@ data2 <- filter(nm, EVID==0, STUDYN==3)
 id2 <- slice(data2, 1, .by = ID)
 
 wrap_dv_preds(data)
-mrggsave_last(stem = "dv-pred", width = 8, labller = NULL)
+mrggsave_last(stem = "dv-pred", width = 7, height = 3, labeller = NULL)
 
 dv_pred(data0, scales = "free") + 
   facet_wrap(~RF, scales = "free", ncol = 2)
 
-mrggsave_last(stem = "dv-pred-base-egfr", width = 9, height = 6, labller = NULL)
+mrggsave_last(stem = "dv-pred-base-egfr", width = 9, height = 6, labeller = NULL)
 
 
 res_time(data) + wres_time(data) + cwres_time(data) + npde_time(data)
-mrggsave_last(stem = "cwres-npde-time", width = 9, height = 6, labller = NULL)
+mrggsave_last(stem = "cwres-npde-time", width = 9, height = 6, labeller = NULL)
 
 res_pred(data) + wres_pred(data) + cwres_pred(data) +  npde_pred(data)
-mrggsave_last(stem = "cwres-npde-pred", width = 9, height = 6, labller = NULL)
+mrggsave_last(stem = "cwres-npde-pred", width = 9, height = 6, labeller = NULL)
 
 npde_hist_q(data, ncol = 2)
-mrggsave_last(stem = "npde-hist", width = 8, labller = NULL)
+mrggsave_last(stem = "npde-hist", width = 8, height = 4, labeller = NULL)
+
+data <- mutate(data, NPDE2 = rt(n(), df = 1))
+data <- mutate(data, NPDE2 = ifelse(NPDE2 < -6 | NPDE2 > 6, NA_real_, NPDE2))
+npde_hist(data, x = "NPDE2") + npde_q(data, x = "NPDE2")
+mrggsave_last(stem = "npde-hist-non", width = 8, height = 4, labeller = NULL)
+
 
 npde_covariate(data2, x = c("EGFR//eGFR", "RF//Renal impairment group"))
-mrggsave_last(stem = "npde-covariate", width = 8, labller = NULL)
+mrggsave_last(stem = "npde-covariate", width = 8, labeller = NULL)
 
 npde_covariate(data0, x = c("EGFR//eGFR", "RF//Renal impairment group"))
-mrggsave_last(stem = "npde-covariate-base", width = 8, labller = NULL)
+mrggsave_last(stem = "npde-covariate-base", width = 8, height = 4, labeller = NULL)
 
 etas <- paste0("ETA", c(3,2,1), "//ETA-", c("CL", "V2", "KA"))
 eta_hist(id0, etas) %>% pm_grid(ncol = 3)
@@ -74,7 +80,7 @@ mrggsave_last(stem = "eta-histogram", width = 9, height = 4, labeller = NULL)
 
 eta_covariate(id0, x = c("EGFR", "RF", "WT", "DOSE"), 
               y = "ETA3//ETA-CL", ncol = 2) %>% rot_xy()
-mrggsave_last(stem = "eta-covariate-base", width = 7, height = 6, labeller = NULL)
+mrggsave_last(stem = "eta-covariate-base", width = 9, height = 6, labeller = NULL)
 
 
 eta_pairs(id0, etas)

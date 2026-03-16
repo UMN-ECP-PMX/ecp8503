@@ -1,0 +1,125 @@
+---
+title: "Grading details"
+author: "Shen Cheng"
+date: today
+format: 
+  revealjs: 
+    transition: none
+    slide-number: true
+    smaller: true
+    scrollable: true
+    embed-resources: true
+editor: visual
+execute:
+  enabled: false
+---
+
+## Grading
+
+-   30% course attendance
+
+-   30% final project (a pharmacometric analysis report)
+
+-   30% final exam
+
+-   10% course evaluation
+
+## Course attendance (30%)
+
+-   Obtained 18 points as of today for everyone registered the course.
+-   Six sessions left (12 points)
+    -   I will take attendance (2 points each session).
+    -   Can attend either in-person or online.
+    -   If miss any session with no **prior** notice, 2 points will be deducted per session.
+
+## Final project (30%)
+
+::: columns
+::: {.column width="50%"}
+A pharmacometric report
+
+-   Exploratory data analysis (EDA).
+
+    -   How was the PK/PD profiles look like?
+
+        -   Mono- vs. bi-exponential.
+
+        -   Intersive vs. sparse.
+
+    -   How was the covariate distribution?
+
+-   What is your base model?
+
+    -   How was the parameter estimated (point estimate & uncertainty)?
+
+    -   How did the diagnostics look like?
+
+    -   Any strategy you took to account for BLQ?
+:::
+
+::: {.column width="50%"}
+-   What is your final model?
+
+    -   What is the strategy taken to develop the final model?
+
+        -   SCM? show your records of significance test.
+
+        -   Full model approach?
+
+    -   How was the parameter estimated (point estimate & uncertainty)?
+
+    -   How did the diagnostics look like?
+
+    -   **Bonus**: constructing a VPC.
+
+    -   **Bonus**: How was the non-parametric uncertainty, derived from either a bootstrap or a SIR?
+:::
+:::
+
+## Final projects (30%)
+
+-   Do **NOT** just stack figures and tables, please also **describe** and **interpret** your results. 
+    -   Lots of figures can be generated for a modeling project. 
+    -   Please only include the ones that are informative.
+        -   Criteria: each figure you inserted should have at least have 1-2 sentences interpretations correspondingly. 
+
+## Final project (30%)
+
+Model 1 (`./model1/models`): NONMEM control stream examples
+
+-   `100.ctl`: example 2-cpt base model.
+
+-   `200.ctl`: example 2-cpt final model developed using SCM.
+
+-   `300.ctl`: example M2 using `200.ctl`.
+
+-   `400.ctl`: example M3 using `200.ctl`.
+
+-   `500.ctl`: example M4 using `200.ctl`.
+
+Model 2: Feel free to develop a model from scratch if you want to challenge yourself
+
+-   Never touched during any in-class exercise.
+
+-   **Bonus** points will be given if used.
+
+## Final project (30%)
+
+-   Prepare your outputs from now!
+-   PMx reporting session on 04/03, start putting your outputs together as a report after the session.
+-   Due: 05/11 (Mon.) 11:59 pm CT
+-   Send me (cheng423\@umn.edu) the final product through emails.
+
+## Final exam (30%)
+
+-   Tentatively 15 short answer questions each worth 2 points.
+-   Concepts throughout the semester without hands-on coding or equation derivations.
+-   A test more for me, not you!
+-   In-class exam.
+    -   Time: 10:10 am-12:05 pm CT 05/08 (Friday).
+    -   Location: 7-145 WDH.
+
+## Evaluation (10%)
+
+-   End-of-semester Student Ratings of Teaching (SRT) course evaluations will be requested at the end of the semester.
+-   Fill the evaluation, and then notify me (cheng423\@umn.edu) your completion through an email.

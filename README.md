@@ -19,8 +19,8 @@
 | 09 (03/20/2026)  | BLQ                                                  | Shen Cheng, PhD                  |
 | 10 (03/27/2026)  | NONMEM OFV (ELS)                                     | Richard Brundage, PharmD, PhD    |
 | 11 (04/03/2026)  | PMx reporting                                        | Mutaz Jaber, PharmD, PhD         |
-| 12 (04/10/2026)  | PKPD modeling startegies                             | Samuel Callisto, PhD             |
-| 13 (04/17/2026)  | Mixture modeling                                     | Richard Brundage, PharmD, PhD    |
+| 12 (04/10/2026)  | Mixture modeling                                     | Richard Brundage, PharmD, PhD    |
+| 13 (04/17/2026)  | PKPD modeling startegies                             | Samuel Callisto, PhD             |
 | 14 (04/24/2026)  | Estimation methods                                   | Samuel Callisto, PhD             |
 | 15 (05/01/2026)  | Optimal study design                                 | Mutaz Jaber, PharmD, PhD         |
 | 16 (05/08/2026)  | **FINAL EXAM**                                       |                                  |

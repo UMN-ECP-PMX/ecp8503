@@ -1,0 +1,98 @@
+\usepackage{tabularray}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{mdframed}
+\usepackage[acronym,toc,nomain]{glossaries}
+\usepackage{todonotes}
+\usepackage{threeparttable}
+\usepackage[format=hang, labelfont=bf,singlelinecheck=false]{caption}
+\usepackage{pdflscape}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+%\savegeometry{margins}
+\usepackage{etoolbox}
+\usepackage{bm}
+\usepackage{pdfpages}
+\DeclareCaptionLabelSeparator{septfls}{\quad}
+\captionsetup{labelsep=septfls, justification=raggedright, singlelinecheck=false,textfont=bf}
+\captionsetup[longtable]{skip=5pt}
+\captionsetup[table]{skip=5pt}
+\RedeclareSectionCommand[
+  beforeskip=0pt,
+  afterindent=false% <- added
+]{chapter}
+\setkomafont{chapter}{\fontsize{14}{16.8}\selectfont}
+\setkomafont{chapterentry}{\fontsize{12}{14}\selectfont}
+\setkomafont{section}{\fontsize{12}{14}\selectfont}
+\setkomafont{subsection}{\fontsize{12}{14}\selectfont}
+\addtokomafont{disposition}{\normalsize\bfseries}
+
+\newglossarystyle{mystyle}
+{
+    \setglossarystyle{long3colheader}%
+    \renewcommand*{\glossaryheader}{
+    %  \textbf{Notation} & \textbf{Description} &
+      \vspace{8pt}
+    \endhead}%
+    \renewcommand*{\glossaryname}{}
+    \renewcommand*{\entryname}{}
+    \renewcommand*{\pagelistname}{}
+   % \renewcommand*{\descriptionname}{\textbf{Description}}
+    \renewcommand{\glossentry}[2]{%
+       \glsentryitem{##1}\glstarget{##1}{\glossentryname{##1}}
+        & \glossentrydesc{##1}
+        & ##2
+        \tabularnewline*}%
+}
+
+% to work with pmtables
+\let\bf\textbf
+\let\it\textit
+
+
+% listing documents
+
+\definecolor{listingbg}{HTML}{F5F5F5}
+\definecolor{framegray}{HTML}{CCCCCC}
+
+\usepackage{fancyvrb}
+\usepackage{fvextra}
+\usepackage{xcolor}
+\usepackage[scaled]{zi4}
+
+\DefineVerbatimEnvironment{nonmemlisting}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  breaksymbolleft={},
+  breaksymbolright={},
+  fontsize=\small,
+  fontfamily=tt,
+  frame=single,
+  framesep=0.25mm,
+  commentchar=;,
+  formatcom=\color{green!40!black},
+  %stringstyle=\color{blue},
+  rulecolor=\color{framegray},
+  xleftmargin=1mm,
+  xrightmargin=1mm,
+  fillcolor=\color{black},
+  framerule=1pt
+}
+
+%\patchcmd{\fnum@figure}{\figurename\nobreakspace\thefigure}{\hyperref[\@currentlabel]{\figurename\nobreakspace\thefigure}}{}{}
+%\patchcmd{\fnum@table}{\tablename\nobreakspace\thetable}{\hyperref[\@currentlabel]{\tablename\nobreakspace\thetable}}{}
+
+
+\renewcommand{\thetable}{\thechapter-\arabic{table}}
+\renewcommand{\thefigure}{\thechapter-\arabic{figure}}
+% \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+% \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+%   breaklines=true,
+%   breakanywhere=true,
+%   breaksymbolleft={},
+%   breaksymbolright={},
+%   breaksymbol={},
+%   breakanywheresymbolpre={},
+%   breakanywheresymbolpost={},
+%   fontsize=\footnotesize
+% }

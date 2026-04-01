@@ -1,0 +1,47 @@
+# Other options include:
+# - analysis plan
+# - protocol
+doc-type: POPULATION PHARMACOKINETIC REPORT 
+project:
+  type: book
+  output-dir: _docs
+
+
+book:
+  output-file: "PopPK_Report"
+  chapters:
+    - index.qmd                  # SYNOPSIS
+    - sections/background.qmd    # INTRODUCTION/BACKGROUND
+  #  - sections/objectives.qmd    # OBJECTIVES/DATA
+  #  - sections/method.qmd        # ANALYSIS METHOD
+  #  - sections/results.qmd       # RESULTS
+  #  - sections/discussion.qmd    # DISCUSSION/CONCLUSION
+    - sections/ref.qmd           # REFERENCES
+  #  - sections/append.qmd        # APPENDIX
+
+
+format:
+  pmxtmpl-pdf: default
+fig-cap-location: top
+tbl-cap-location: top
+title: ""
+status: Draft
+version: 1.0.0
+report-number:
+author:
+  - Author One
+  - Author Two
+review:
+  - Reviewer One
+  - Reviewer Two
+approve: Approval One
+date: today
+date-format: "DD MMMM YYYY"
+drug-name: "ABC1234"
+study-number:
+  - "123-444"
+  - "123-555"
+indication: "Indication"
+abbr: abbr.tex
+bibliography: ref.bib
+table_caption: Summary of Clinical Studies Used In the Analysis

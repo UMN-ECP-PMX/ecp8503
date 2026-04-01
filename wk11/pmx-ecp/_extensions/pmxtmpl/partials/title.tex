@@ -1,0 +1,36 @@
+\usepackage{typearea}
+\setlength{\headheight}{30pt}
+\setlength{\headsep}{25pt}
+
+\areaset{6.5in}{9in}
+\setlength{\topmargin}{-30pt}
+\setlength{\footskip}{0.5in}
+\setlength{\marginparwidth}{1in}
+\setlength{\marginparsep}{0.6cm}
+%\flushbottom
+\usepackage[headsepline,footsepline]{scrlayer-scrpage}
+\usepackage[capitalize,noabbrev]{cleveref}
+\Crefformat{figure}{#2Figure~#1#3}
+\Crefformat{table}{#2Table~#1#3}
+\pagestyle{scrheadings}
+\lohead{$doc-type$ \\ Report No.: $report-number$ \\ }
+\rohead{$status$ \\ Version: $version$}
+\ifoot{CONFIDENTIAL}
+\ofoot{$date$} % empty
+\cfoot{Page\,\thepage}
+\chead{}
+\renewcommand*\chapterpagestyle{scrheadings}
+\addtokomafont{pageheadfoot}{\scriptsize}
+\KOMAoptions{headsepline=2pt:\textwidth, footsepline=false}
+
+\renewcommand{\glsnamefont}[1]{#1}
+
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\setlength\glsdescwidth{0.8\hsize}
+\loadglsentries{$abbr$}
+\setglossarystyle{mystyle}
+\makenoidxglossaries
+
+
+

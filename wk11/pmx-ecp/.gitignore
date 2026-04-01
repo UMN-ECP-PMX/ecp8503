@@ -1,0 +1,7 @@
+examples/
+.quarto/
+pmxtmp.Rproj
+
+/.quarto/
+**/*.quarto_ipynb
+.Rproj.user/

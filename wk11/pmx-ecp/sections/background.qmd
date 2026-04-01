@@ -1,0 +1,138 @@
+# INTRODUCTION {#sec-introduction}
+
+{{< lipsum 2 >}} @fig-one
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-one
+#| fig-cap: Concentration-Time Profile for Theophyline 
+
+fig_path <- here::here("deliv", "figures", "fig-conc-time.pdf")
+knitr::include_graphics(fig_path)
+```
+
+
+{{< lipsum 3 >}} @tbl-summary
+
+
+
+::: {#tbl-summary tbl-pos="htp"}
+ 
+```{r}
+#| echo: false 
+#| output: asis
+table_file <- here::here("deliv", "tables", "tbl-summary.tex")
+cat("\\input{", table_file, "}")
+```
+
+
+{{< meta table_caption >}}
+:::
+
+{{< lipsum 2 >}} \Cref{tab:ConCov}
+
+::: {.lscape}
+
+
+```{r}
+#| echo: false 
+#| output: asis
+table_file <- here::here("deliv", "tables", "tbl-summary-long.tex")
+cat("\\input{", table_file, "}")
+```
+
+:::
+
+{{< lipsum 1 >}}
+
+
+{{< lipsum 1 >}}see @tbl-summary-2
+
+::: {.lscape}
+
+```{r}
+#| label: tbl-summary-2
+#| tbl-pos: "H"
+#| tbl-cap: Descriptive Statistics of Studies Included 
+#| echo: false 
+#| output: asis
+
+table_file <- here::here("deliv", "tables", "tbl-summary.tex")
+cat("\\input{", table_file, "}")
+```
+
+:::
+
+{{< lipsum 1 >}} \Cref{tab:sumstats}
+
+
+```{r}
+#| echo: false
+#| output: asis 
+table_file <- here::here("deliv", "tables", "tbl-summary.tex")
+caption <- "Yet Another Descriptive Statistics"
+label <- "tab:sumstats"
+
+lines <- c(
+  "\\begin{table}[H]",
+  sprintf("\\caption{%s}", caption),
+  sprintf("\\label{%s}", label),
+  sprintf("\\input{%s}", table_file),
+  "%additional LaTeX code", 
+  "\\end{table}"
+)
+cat(paste(lines, collapse = "\n"), "\n")
+
+```
+
+{{< lipsum 3 >}} @fig-two
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-two
+#| fig-cap: Concentration-Time Profile for Theophyline Panel A and B
+#| fig-pos: "H"
+
+fig_path <- here::here("deliv", "figures", "fig-conc-time-layout-2.pdf")
+knitr::include_graphics(fig_path)
+```
+
+{{< lipsum 1 >}} see [@efron2000bootstrap]
+
+::: {#fig-three fig-pos="H"}
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+
+fig_path <- here::here("deliv", "figures", "fig-conc-time-layout-2.pdf")
+knitr::include_graphics(fig_path)
+```
+
+\raggedright The solid lines represent something
+
+Concentration-Time Profile for Theophyline Panel A and B
+:::
+
+# NONMEM OUTPUT
+
+\begin{nonmemlisting}
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| output: asis
+
+lst_path <- here::here("deliv", "1.lst")
+brio <- readLines(lst_path)
+cat(brio, sep = "\n")
+```
+
+\end{nonmemlisting}

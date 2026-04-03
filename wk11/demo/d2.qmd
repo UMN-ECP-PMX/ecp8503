@@ -1,3 +1,59 @@
 ---
-title: Adding Tables, Figures and Crossref
----
+title: Figures, Tables and Crossref
+format:
+    html:
+        toc: true
+--- 
+
+
+## Figures
+
+Different ways to deal with figures depending on the format and storage. It can be:
+
+- Internal Figure: Using code chunks to generate graphics e.g., using ggplot2, pmplots, etc. 
+- External Figure: Sourced from png, pdf, etc. 
+
+For more info <https://quarto.org/docs/authoring/figures.html> 
+
+### Internal Figures 
+
+```{r}
+#| echo: fenced
+#| eval: true
+#| label: fig-pk
+#| fig-width: 10
+#| fig-cap: this is the caption
+#| output-location: column-fragment
+
+library(ggplot2)
+
+pk.profile <- ggplot(Theoph, aes(x=Time, y=conc)) + 
+    geom_point(color="blue", 
+               alpha=0.6)
+
+pk.profile
+```
+
+The `#| label` option is how the figure is identified when you cross reference it. To cross reference the figure in text type `@label`
+
+-   @fig-pk is my first Figure 
+
+-   The "fig-cap" is the figure's title
+
+-   To display the figure code and output figure side-by-side use the option: "output-location: column-fragment"
+
+```{r}
+#| echo: fenced
+#| eval: true
+#| label: fig-pk
+#| fig-width: 5
+#| fig-cap: this is the caption
+#| output-location: column-fragment
+
+library(ggplot2)
+
+PK_profile<-ggplot(Theoph, aes(x=Time, y=conc)) + 
+    geom_point(color="blue", 
+               alpha=0.6)
+
+PK_profile

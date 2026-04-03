@@ -1,0 +1,29 @@
+---
+title: Tips on automationg using Metadata
+model: 3
+figures:
+    npde: 
+       pred: 
+          path: "./cwres-npde-pred"
+          cap: "Residual Plots versus population prediction" 
+       tad:  
+          path: "./cwres-npde-tad" 
+          cap: "Residual Plots versus time after dose"
+params:
+    fig_path: "this/is/figure/path" 
+    npde_pred: ./cwres-npde-pred.png
+---
+
+
+This is figure path {{< meta params.fig_path >}}
+
+```{r}
+x <- params$fig_path
+print(x)
+getwd()
+```
+
+![{{< meta figures.npde.pred.cap >}}]({{< meta figures.npde.pred.path >}})
+
+![{{< meta figures.npde.tad.cap >}}]({{< meta figures.npde.tad.path >}})
+

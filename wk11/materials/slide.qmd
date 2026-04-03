@@ -22,10 +22,16 @@ format:
     monofont: "JetBrains Mono, Fira Code, Consolas, monospace"
     fontsize: "1rem"
     linestretch: 1.7
-  #  margin-left: "0"
+    margin-left: "0"
     title-block-banner: false
 knitr: true
 ---
+
+- We use powerful computational tools for our analyses every day. But when it comes time to assemble the results, we go back ages! 
+
+- copy-pasting into Word, reformatting tables by hand, chasing down the right version. Each manual step introduces its own uncertainty: a mislabeled figure, a transposed number, a stale table from the wrong run. 
+
+- These errors propagate — one wrong value in an early step can cascade through the entire document undetected. The same programmatic thinking we apply to modeling can transform how we write reports.
 
 ## The Pharmacometric Analysis Lifecycle
 
@@ -68,7 +74,7 @@ Think about it: extracting parameters from NONMEM output, formatting tables in E
 
 ## Judge by Document Quality
 
-Your readers, whether journal reviewers, thesis committees, or regulators, evaluate your science through the document. 
+Your readers, whether journal reviewers, thesis committees, or regulators, evaluate the science/outcome/results through the document. 
 
 :::: {.columns}
 ::: {.column width="48%"}

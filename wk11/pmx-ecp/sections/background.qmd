@@ -9,7 +9,7 @@
 #| label: fig-one
 #| fig-cap: Concentration-Time Profile for Theophyline 
 
-fig_path <- here::here("deliv", "figures", "fig-conc-time.pdf")
+fig_path <- here::here("wk11", "pmx-ecp", "deliv", "figures", "fig-conc-time.pdf")
 knitr::include_graphics(fig_path)
 ```
 
@@ -23,7 +23,7 @@ knitr::include_graphics(fig_path)
 ```{r}
 #| echo: false 
 #| output: asis
-table_file <- here::here("deliv", "tables", "tbl-summary.tex")
+table_file <- here::here("wk11", "pmx-ecp","deliv", "tables", "tbl-summary.tex")
 cat("\\input{", table_file, "}")
 ```
 
@@ -39,7 +39,7 @@ cat("\\input{", table_file, "}")
 ```{r}
 #| echo: false 
 #| output: asis
-table_file <- here::here("deliv", "tables", "tbl-summary-long.tex")
+table_file <- here::here("wk11", "pmx-ecp","deliv", "tables", "tbl-summary-long.tex")
 cat("\\input{", table_file, "}")
 ```
 
@@ -59,7 +59,7 @@ cat("\\input{", table_file, "}")
 #| echo: false 
 #| output: asis
 
-table_file <- here::here("deliv", "tables", "tbl-summary.tex")
+table_file <- here::here("wk11", "pmx-ecp","deliv", "tables", "tbl-summary.tex")
 cat("\\input{", table_file, "}")
 ```
 
@@ -71,7 +71,7 @@ cat("\\input{", table_file, "}")
 ```{r}
 #| echo: false
 #| output: asis 
-table_file <- here::here("deliv", "tables", "tbl-summary.tex")
+table_file <- here::here("wk11", "pmx-ecp","deliv", "tables", "tbl-summary.tex")
 caption <- "Yet Another Descriptive Statistics"
 label <- "tab:sumstats"
 
@@ -97,7 +97,7 @@ cat(paste(lines, collapse = "\n"), "\n")
 #| fig-cap: Concentration-Time Profile for Theophyline Panel A and B
 #| fig-pos: "H"
 
-fig_path <- here::here("deliv", "figures", "fig-conc-time-layout-2.pdf")
+fig_path <- here::here("wk11", "pmx-ecp","deliv", "figures", "fig-conc-time-layout-2.pdf")
 knitr::include_graphics(fig_path)
 ```
 
@@ -111,7 +111,7 @@ knitr::include_graphics(fig_path)
 #| message: false
 
 
-fig_path <- here::here("deliv", "figures", "fig-conc-time-layout-2.pdf")
+fig_path <- here::here("wk11", "pmx-ecp","deliv", "figures", "fig-conc-time-layout-2.pdf")
 knitr::include_graphics(fig_path)
 ```
 
@@ -130,7 +130,7 @@ Concentration-Time Profile for Theophyline Panel A and B
 #| message: false
 #| output: asis
 
-lst_path <- here::here("deliv", "1.lst")
+lst_path <- here::here("wk11", "pmx-ecp","deliv", "106.lst")
 brio <- readLines(lst_path)
 cat(brio, sep = "\n")
 ```

@@ -1,0 +1,47 @@
+---
+title: "Untitled"
+author: ECP Class
+format: pdf
+execute: 
+  echo: false
+figures:
+    fig-two-caption: This is figure two caption
+    fig-three-caption: This is another caption
+---
+
+This is a text
+
+```{r}
+#| echo: true
+x <- "Only show the values"
+print(x)
+```
+
+Figure label in metadata need to start with `fig-*` Table label in metadata need to start with `tbl-*`
+
+```{r}
+#| label: fig-pk 
+#| fig-cap: Concentration Time profile 
+#| fig-cap-location: top
+library(ggplot2)
+
+ggplot(Theoph, aes(Time, conc, group=Subject)) + 
+    geom_line()
+```
+
+This is @fig-pk
+
+DIV syntax
+
+::: {#fig-pk-two}
+```{r}
+library(ggplot2)
+
+ggplot(Theoph, aes(Time, conc, group=Subject)) + 
+    geom_line()
+```
+
+{{< meta figures.fig-two-caption >}}
+:::
+
+referring to @fig-pk-two

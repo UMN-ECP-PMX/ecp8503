@@ -151,9 +151,9 @@ Beyond documentation, literate programming offers benefits in education, researc
 
 ::: {#fig-elephants layout-ncol=2}
 
-![Shakespeare's Midsummer Night's Dream, 1600, from the Folger Shakespeare Library](shake.png){#fig-shake width=50%}
+![Shakespeare's Midsummer Night's Dream, 1600, from the Folger Shakespeare Library](shake.png){#fig-shake width=70%}
 
-![The really Quarto](quarto.png){#fig-quarto}
+![The real Quarto](quarto.png){#fig-quarto}
 
 History
 :::

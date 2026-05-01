@@ -99,9 +99,9 @@ poped.db.ED <- create.poped.database(
   d             = c(CL = 0.07, V = 0.02, KA = 0.6),
   sigma         = c(prop = 0.01, add = 0.25),
   groupsize = 32,
-  xt        = c(0.5, 2, 24),
+  xt        = c(0.5, 2, 12),
   minxt     = 0, maxxt = 24,
-  a         = 70
+  a         = 100
 )
 
 # E[ -log det M(theta, xi) ]  averaged over the prior on bpop

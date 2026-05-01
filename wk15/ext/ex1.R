@@ -23,8 +23,8 @@ M_i <- function(t) {
 }
 
 # Try it on a single time point
-M_at_12h <- M_i(6)
-M_at_12h 
+M_at_6h <- M_i(6)
+M_at_6h 
 #  - Note the off-diagonal elements -- these capture CL/V correlation.
 #  - At t = 1/k ~ 3h, the (V,V) element is 0. Try it:
 M_i(1/k)
@@ -33,10 +33,13 @@ M_list <- lapply(c(1/k, 6), M_i)
 M_list
 
 
+
 M <- Reduce(`+`, M_list)
 detM <- det(M)
 #detM
 trM <- sum(diag(M))
+# to inverse a matrix
+# $COVARIANCE MATRIX=R 
 Minv <- solve(M)
 rse_CL <- 100 * sqrt(Minv[1,1]) / CL
 rse_V  <- 100 * sqrt(Minv[2,2]) / V
@@ -46,7 +49,7 @@ Msingular
 Ms <- Reduce(`+`, Msingular)
 MsInv <- solve(Ms)
 det(Ms) # Very small value
-
+sum(diag(Ms))
 rse_CL1 <- 100 * sqrt(MsInv[1,1]) / CL
 rse_V1  <- 100 * sqrt(MsInv[2,2]) / V
 

@@ -1,0 +1,409 @@
+PopED Results 
+
+        2026-04-30 22:53:30.271115
+
+==============================================================================
+Model description : PopED model 
+
+Model Sizes : 
+Number of individual model parameters                  g[j]    : Ng    = 4
+Number of population model fixed parameters            bpop[j] : Nbpop = 3
+Number of population model random effects parameters   b[j]    : Nb    = 3
+
+Typical Population Parameters:
+bpop[1]:     8 
+bpop[2]:    12 
+bpop[3]:     1 
+
+Between Subject Variability matrix D (variance units) 
+0.07 0.00 0.00
+0.00 0.09 0.00
+0.00 0.00 0.19
+
+Diagonal Elements of D [sqrt(param)]:
+D[1,1]:  0.07 [0.2646] 
+D[2,2]:  0.09 [  0.3] 
+D[3,3]:  0.19 [0.4359] 
+
+Residual Unexplained Variability matrix SIGMA (variance units) : 
+0.015 0.000
+0.000 0.050
+
+Diagonal Elements of SIGMA [sqrt(param)]:
+SIGMA[1,1]: 0.015 [0.1225] 
+SIGMA[2,2]:  0.05 [0.2236] 
+
+==============================================================================
+Experiment description (design and design space)
+
+Number of individuals: 32
+Number of groups (individuals with same design): 1
+Number of individuals per group:
+     Group 1: 32
+Number of samples per group:
+ Number of discrete experimental variables: 0
+Number of model covariates: 1
+
+Initial Sampling Schedule
+Group 1:    0.5      2     12
+
+Minimum allowed sampling values
+Group 1:  1e-05  1e-05  1e-05
+
+Maximum allowed sampling values
+Group 1:     12     12     12
+
+Covariates:
+Group 1: 100
+
+===============================================================================
+Initial design evaluation
+
+Initial OFV = 30.1687
+
+Efficiency criterion [usually defined as OFV^(1/npar)]  = 43.4274
+
+Initial design
+expected relative standard error
+(%RSE, rounded to nearest integer)
+   Parameter   Values   RSE_0
+          CL        8      22
+           V       12     107
+          KA        1     113
+        d_CL     0.07     287
+         d_V     0.09     390
+        d_KA     0.19     297
+    sig_prop    0.015     630
+     sig_add     0.05      25
+
+==============================================================================
+Criterion Specification
+
+OFV calculation for FIM: 4 
+  1=Determinant of FIM,
+  4=log determinant of FIM,
+  6=determinant of interesting part of FIM (Ds)
+
+Approximation method: 0
+  0=FO, 
+  1=FOCE, 
+  2=FOCEI, 
+  3=FOI
+
+Fisher Information Matrix type: 1
+  0=Full FIM,
+  1=Reduced FIM,
+  2=weighted models,
+  3=Loc models,
+  4=reduced FIM with derivative of SD of sigma as pfim,
+  5=FULL FIM parameterized with A,B,C matrices & derivative of variance,
+  6=Calculate one model switch at a time, good for large matrices,
+  7=Reduced FIM parameterized with A,B,C matrices & derivative of variance
+
+Design family: 1
+  D-family design (1) or 
+  ED-family design (0) 
+  (with or without parameter uncertainty)
+
+==============================================================================
+Optimization of design parameters
+
+* Optimize Sampling Schedule
+
+*******************************
+Initial Value
+ OFV(mf) = 30.1687
+*******************************
+
+RS - It. : 5   OFV : 32.3453
+RS - It. : 10   OFV : 32.3453
+RS - It. : 15   OFV : 35.4232
+RS - It. : 20   OFV : 35.9523
+RS - It. : 25   OFV : 35.9523
+RS - It. : 30   OFV : 35.9523
+RS - It. : 35   OFV : 38.4083
+RS - It. : 40   OFV : 38.4083
+RS - It. : 45   OFV : 38.4083
+RS - It. : 50   OFV : 38.4083
+RS - It. : 55   OFV : 38.4083
+RS - It. : 60   OFV : 38.4083
+RS - It. : 65   OFV : 38.4083
+RS - It. : 70   OFV : 38.4083
+RS - It. : 75   OFV : 39.1214
+RS - It. : 80   OFV : 39.3912
+RS - It. : 85   OFV : 39.3912
+RS - It. : 90   OFV : 39.3912
+RS - It. : 95   OFV : 39.3912
+RS - It. : 100   OFV : 39.3912
+RS - It. : 105   OFV : 39.3912
+RS - It. : 110   OFV : 39.3912
+RS - It. : 115   OFV : 39.3912
+RS - It. : 120   OFV : 39.3912
+RS - It. : 125   OFV : 39.3912
+RS - It. : 130   OFV : 39.3912
+RS - It. : 135   OFV : 39.3912
+RS - It. : 140   OFV : 39.3912
+RS - It. : 145   OFV : 39.3912
+RS - It. : 150   OFV : 39.3912
+RS - It. : 155   OFV : 39.3912
+RS - It. : 160   OFV : 39.3912
+RS - It. : 165   OFV : 39.3912
+RS - It. : 170   OFV : 39.3912
+RS - It. : 175   OFV : 39.3912
+RS - It. : 180   OFV : 39.3912
+RS - It. : 185   OFV : 39.3912
+RS - It. : 190   OFV : 39.3912
+RS - It. : 195   OFV : 39.3912
+RS - It. : 200   OFV : 39.3912
+RS - It. : 205   OFV : 39.3912
+RS - It. : 210   OFV : 39.3912
+RS - It. : 215   OFV : 39.3912
+RS - It. : 220   OFV : 39.3912
+RS - It. : 225   OFV : 39.3912
+RS - It. : 230   OFV : 39.3912
+RS - It. : 235   OFV : 39.3912
+RS - It. : 240   OFV : 39.3912
+RS - It. : 245   OFV : 39.3912
+RS - It. : 250   OFV : 39.3912
+RS - It. : 255   OFV : 39.3912
+RS - It. : 260   OFV : 39.3912
+RS - It. : 265   OFV : 39.3912
+RS - It. : 270   OFV : 39.3917
+RS - It. : 275   OFV : 39.3917
+RS - It. : 280   OFV : 39.4219
+RS - It. : 285   OFV : 39.4219
+RS - It. : 290   OFV : 39.4219
+RS - It. : 295   OFV : 39.4219
+RS - It. : 300   OFV : 39.4219
+
+*******************************
+RS Results
+ OFV(mf) = 39.4219
+
+Optimized Sampling Schedule
+Group 1: 0.3087  1.775   6.38
+*********************************
+
+SG - It. : 1  OFV : 39.43   Diff. :     1
+SG - It. : 2  OFV : 39.43   Diff. : 0.0001453
+SG - It. : 3  OFV : 39.44   Diff. : 0.000139
+SG - It. : 4  OFV : 39.44   Diff. : 8.909e-05
+SG - It. : 5  OFV : 39.44   Diff. : 1.655e-05
+SG - It. : 6  OFV : 39.45   Diff. : 6.48e-05
+SG - It. : 7  OFV : 39.45   Diff. : 1.836e-05
+SG - It. : 8  OFV : 39.45   Diff. : 1.25e-05
+SG - It. : 9  OFV : 39.45   Diff. : 5.495e-06
+SG - It. : 10  OFV : 39.45   Diff. : 7.119e-06
+SG - It. : 11  OFV : 39.45   Diff. : 9.406e-06
+SG - It. : 12  OFV : 39.45   Diff. : 2.065e-06
+SG - It. : 13  OFV : 39.45   Diff. : 1.863e-06
+SG - It. : 14  OFV : 39.45   Diff. : 7.811e-07
+SG - It. : 15  OFV : 39.45   Diff. : 1.375e-06
+SG - It. : 16  OFV : 39.45   Diff. : 7.799e-07
+SG - It. : 17  OFV : 39.45   Diff. : 1.116e-06
+SG - It. : 18  OFV : 39.45   Diff. : 7.439e-07
+SG - It. : 19  OFV : 39.45   Diff. : 9.556e-07
+SG - It. : 20  OFV : 39.45   Diff. : 7.024e-07
+SG - It. : 21  OFV : 39.45   Diff. : 8.455e-07
+SG - It. : 22  OFV : 39.45   Diff. : 6.63e-07
+SG - It. : 23  OFV : 39.45   Diff. : 7.652e-07
+SG - It. : 24  OFV : 39.45   Diff. : 2.941e-08
+SG - It. : 25  OFV : 39.45   Diff. : 6.051e-07
+SG - It. : 26  OFV : 39.45   Diff. : 5.7e-07
+SG - It. : 27  OFV : 39.45   Diff. : 6.143e-07
+SG - It. : 28  OFV : 39.45   Diff. : 4.816e-07
+SG - It. : 29  OFV : 39.45   Diff. : 5.17e-07
+SG - It. : 30  OFV : 39.45   Diff. : 4.603e-07
+SG - It. : 31  OFV : 39.45   Diff. : 4.886e-07
+SG - It. : 32  OFV : 39.45   Diff. : 4.748e-07
+SG - It. : 33  OFV : 39.45   Diff. : 4.979e-07
+SG - It. : 34  OFV : 39.45   Diff. : 4.563e-07
+SG - It. : 35  OFV : 39.45   Diff. : 4.754e-07
+SG - It. : 36  OFV : 39.45   Diff. : 3.967e-07
+SG - It. : 37  OFV : 39.45   Diff. : 4.13e-07
+SG - It. : 38  OFV : 39.45   Diff. : 3.831e-07
+SG - It. : 39  OFV : 39.45   Diff. : 3.972e-07
+SG - It. : 40  OFV : 39.45   Diff. : 4.001e-07
+SG - It. : 41  OFV : 39.45   Diff. : 4.121e-07
+SG - It. : 42  OFV : 39.45   Diff. : 3.563e-07
+SG - It. : 43  OFV : 39.45   Diff. : 3.667e-07
+SG - It. : 44  OFV : 39.45   Diff. : 3.46e-07
+SG - It. : 45  OFV : 39.45   Diff. : 3.549e-07
+SG - It. : 46  OFV : 39.45   Diff. : 3.591e-07
+SG - It. : 47  OFV : 39.45   Diff. : 3.671e-07
+SG - It. : 48  OFV : 39.45   Diff. : 3.499e-07
+SG - It. : 49  OFV : 39.45   Diff. : 3.571e-07
+SG - It. : 50  OFV : 39.45   Diff. : 3.153e-07
+SG - It. : 51  OFV : 39.45   Diff. : 3.216e-07
+SG - It. : 52  OFV : 39.45   Diff. : 3.077e-07
+SG - It. : 53  OFV : 39.45   Diff. : 3.133e-07
+SG - It. : 54  OFV : 39.45   Diff. : 3.007e-07
+SG - It. : 55  OFV : 39.45   Diff. : 3.057e-07
+SG - It. : 56  OFV : 39.45   Diff. : 2.942e-07
+SG - It. : 57  OFV : 39.45   Diff. : 2.99e-07
+SG - It. : 58  OFV : 39.45   Diff. : 2.884e-07
+SG - It. : 59  OFV : 39.45   Diff. : 2.924e-07
+SG - It. : 60  OFV : 39.45   Diff. : 2.958e-07
+SG - It. : 61  OFV : 39.45   Diff. : 2.995e-07
+SG - It. : 62  OFV : 39.45   Diff. : 2.9e-07
+SG - It. : 63  OFV : 39.45   Diff. : 2.935e-07
+SG - It. : 64  OFV : 39.45   Diff. : 2.847e-07
+SG - It. : 65  OFV : 39.45   Diff. : 2.879e-07
+SG - It. : 66  OFV : 39.45   Diff. : 2.795e-07
+SG - It. : 67  OFV : 39.45   Diff. : 2.825e-07
+SG - It. : 68  OFV : 39.45   Diff. : 2.581e-07
+SG - It. : 69  OFV : 39.45   Diff. : 2.607e-07
+SG - It. : 70  OFV : 39.45   Diff. : 2.537e-07
+SG - It. : 71  OFV : 39.45   Diff. : 2.561e-07
+SG - It. : 72  OFV : 39.45   Diff. : 2.494e-07
+SG - It. : 73  OFV : 39.45   Diff. : 2.518e-07
+SG - It. : 74  OFV : 39.45   Diff. : 2.457e-07
+SG - It. : 75  OFV : 39.45   Diff. : 2.477e-07
+SG - It. : 76  OFV : 39.45   Diff. : 2.421e-07
+SG - It. : 77  OFV : 39.45   Diff. : 2.438e-07
+SG - It. : 78  OFV : 39.45   Diff. : 2.487e-07
+SG - It. : 79  OFV : 39.45   Diff. : 2.507e-07
+SG - It. : 80  OFV : 39.45   Diff. : 2.452e-07
+SG - It. : 81  OFV : 39.45   Diff. : 2.469e-07
+SG - It. : 82  OFV : 39.45   Diff. : 2.304e-07
+SG - It. : 83  OFV : 39.45   Diff. : 2.317e-07
+SG - It. : 84  OFV : 39.45   Diff. : 2.269e-07
+SG - It. : 85  OFV : 39.45   Diff. : 2.287e-07
+SG - It. : 86  OFV : 39.45   Diff. : 2.338e-07
+SG - It. : 87  OFV : 39.45   Diff. : 2.351e-07
+SG - It. : 88  OFV : 39.45   Diff. : 2.306e-07
+SG - It. : 89  OFV : 39.45   Diff. : 2.319e-07
+SG - It. : 90  OFV : 39.45   Diff. : 2.278e-07
+SG - It. : 91  OFV : 39.45   Diff. : 2.29e-07
+SG - It. : 92  OFV : 39.45   Diff. : 2.25e-07
+SG - It. : 93  OFV : 39.45   Diff. : 2.26e-07
+SG - It. : 94  OFV : 39.45   Diff. : 2.222e-07
+SG - It. : 95  OFV : 39.45   Diff. : 2.234e-07
+SG - It. : 96  OFV : 39.45   Diff. : 2.081e-07
+SG - It. : 97  OFV : 39.45   Diff. : 2.091e-07
+SG - It. : 98  OFV : 39.45   Diff. : 3.291e-07
+SG - It. : 99  OFV : 39.45   Diff. : 3.284e-07
+SG - It. : 100  OFV : 39.45   Diff. : 2.037e-07
+SG - It. : 101  OFV : 39.45   Diff. : 2.029e-07
+SG - It. : 102  OFV : 39.45   Diff. : 1.996e-07
+SG - It. : 103  OFV : 39.45   Diff. : 2.004e-07
+SG - It. : 104  OFV : 39.45   Diff. : 2.067e-07
+SG - It. : 105  OFV : 39.45   Diff. : 2.077e-07
+SG - It. : 106  OFV : 39.45   Diff. : 2.038e-07
+SG - It. : 107  OFV : 39.45   Diff. : 1.24e-07
+SG - It. : 108  OFV : 39.45   Diff. : 1.208e-07
+SG - It. : 109  OFV : 39.45   Diff. : 1.224e-07
+SG - It. : 110  OFV : 39.45   Diff. : 1.196e-07
+SG - It. : 111  OFV : 39.45   Diff. : 1.214e-07
+SG - It. : 112  OFV : 39.45   Diff. : 1.183e-07
+SG - It. : 113  OFV : 39.45   Diff. : 1.199e-07
+SG - It. : 114  OFV : 39.45   Diff. : 1.172e-07
+SG - It. : 115  OFV : 39.45   Diff. : 1.188e-07
+SG - It. : 116  OFV : 39.45   Diff. : 1.16e-07
+SG - It. : 117  OFV : 39.45   Diff. : 1.174e-07
+SG - It. : 118  OFV : 39.45   Diff. : 1.149e-07
+SG - It. : 119  OFV : 39.45   Diff. : 1.163e-07
+SG - It. : 120  OFV : 39.45   Diff. : 1.138e-07
+SG - It. : 121  OFV : 39.45   Diff. : 1.152e-07
+SG - It. : 122  OFV : 39.45   Diff. : 1.126e-07
+SG - It. : 123  OFV : 39.45   Diff. : 1.139e-07
+SG - It. : 124  OFV : 39.45   Diff. : 1.117e-07
+SG - It. : 125  OFV : 39.45   Diff. : 1.13e-07
+SG - It. : 126  OFV : 39.45   Diff. : 1.107e-07
+SG - It. : 127  OFV : 39.45   Diff. : 1.119e-07
+SG - It. : 128  OFV : 39.45   Diff. : 1.096e-07
+SG - It. : 129  OFV : 39.45   Diff. : 1.107e-07
+SG - It. : 130  OFV : 39.45   Diff. : 1.087e-07
+SG - It. : 131  OFV : 39.45   Diff. : 1.098e-07
+SG - It. : 132  OFV : 39.45   Diff. : 1.078e-07
+SG - It. : 133  OFV : 39.45   Diff. : 1.089e-07
+SG - It. : 134  OFV : 39.45   Diff. : 1.069e-07
+SG - It. : 135  OFV : 39.45   Diff. : 1.079e-07
+SG - It. : 136  OFV : 39.45   Diff. : 1.061e-07
+SG - It. : 137  OFV : 39.45   Diff. : 1.071e-07
+SG - It. : 138  OFV : 39.45   Diff. : 1.054e-07
+SG - It. : 139  OFV : 39.45   Diff. : 1.063e-07
+SG - It. : 140  OFV : 39.45   Diff. : 1.043e-07
+SG - It. : 141  OFV : 39.45   Diff. : 1.053e-07
+SG - It. : 142  OFV : 39.45   Diff. : 1.035e-07
+SG - It. : 143  OFV : 39.45   Diff. : 1.043e-07
+SG - It. : 144  OFV : 39.45   Diff. : 1.026e-07
+SG - It. : 145  OFV : 39.45   Diff. : 1.035e-07
+SG - It. : 146  OFV : 39.45   Diff. : 1.019e-07
+SG - It. : 147  OFV : 39.45   Diff. : 1.026e-07
+SG - It. : 148  OFV : 39.45   Diff. : 1.01e-07
+SG - It. : 149  OFV : 39.45   Diff. : 1.018e-07
+SG - It. : 150  OFV : 39.45   Diff. : 1.004e-07
+
+SG - Iteration 150 --------- FINAL -------------------------
+xt Gradient Inversion Occurred
+Normalized gradient: Grad_xt(OFV)/OFV
+-0.000117776312900667
+ 1.72473152474057e-05
+ 5.62559017443432e-05
+xt opt:
+0.305151372875004
+ 1.88772959097699
+ 6.34996739666313
+OFV(mf)    : 39.4471
+diff       : 1.00354e-07
+*************************************************************
+*****************************
+            Line Search
+
+
+Best value for OFV(MF) = 39.4471
+
+Best value for xt:
+Group 1: 0.3052  1.888   6.35
+
+
+Line search run time: 0.357 seconds
+***************************
+
+===============================================================================
+FINAL RESULTS
+Optimized Sampling Schedule
+Group 1: 0.3052  1.888   6.35
+
+ FIM: 
+ 5.275714e+00  9.514020e-02  1.500991e-01  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+ 9.514020e-02  9.811085e-01 -8.166276e+00  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+ 1.500991e-01 -8.166276e+00  9.816987e+01  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+ 0.000000e+00  0.000000e+00  0.000000e+00  1.781322e+03  1.303439e+00  2.252973e-02  1.320388e+03  4.840579e+02
+ 0.000000e+00  0.000000e+00  0.000000e+00  1.303439e+00  3.118740e+02  1.500481e+02  3.235366e+02  1.823544e+02
+ 0.000000e+00  0.000000e+00  0.000000e+00  2.252973e-02  1.500481e+02  1.505832e+02  2.528629e+02  6.350554e+01
+ 0.000000e+00  0.000000e+00  0.000000e+00  1.320388e+03  3.235366e+02  2.528629e+02  1.375539e+04  3.502823e+03
+ 0.000000e+00  0.000000e+00  0.000000e+00  4.840579e+02  1.823544e+02  6.350554e+01  3.502823e+03  2.595017e+03
+
+
+Inverse(FIM):
+ 1.909453e-01 -6.809483e-02 -5.956429e-03  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+-6.809483e-02  3.337785e+00  2.777583e-01  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+-5.956429e-03  2.777583e-01  3.330090e-02  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+ 0.000000e+00  0.000000e+00  0.000000e+00  6.111030e-04  5.700375e-05  4.491712e-05 -4.647303e-05 -5.636565e-05
+ 0.000000e+00  0.000000e+00  0.000000e+00  5.700375e-05  6.415426e-03 -6.327657e-03  5.794765e-05 -3.848196e-04
+ 0.000000e+00  0.000000e+00  0.000000e+00  4.491712e-05 -6.327657e-03  1.311024e-02 -1.918125e-04  3.743506e-04
+ 0.000000e+00  0.000000e+00  0.000000e+00 -4.647303e-05  5.794765e-05 -1.918125e-04  1.172649e-04 -1.489965e-04
+ 0.000000e+00  0.000000e+00  0.000000e+00 -5.636565e-05 -3.848196e-04  3.743506e-04 -1.489965e-04  6.148681e-04
+
+OFV = 39.4471
+
+Efficiency criterion [usually defined as det(FIM)^(1/npar)]  = 138.502
+
+Efficiency: 
+  ((exp(ofv_final) / exp(ofv_init))^(1/n_parameters)) = 3.1893
+
+Expected relative standard error
+(%RSE, rounded to nearest integer):
+   Parameter   Values   RSE_0   RSE
+          CL        8      22     5
+           V       12     107    15
+          KA        1     113    18
+        d_CL     0.07       0     0
+         d_V     0.09     390    89
+        d_KA     0.19       1     0
+    sig_prop    0.015     630    72
+     sig_add     0.05      25    50
+
+Total running time: 3.322 seconds

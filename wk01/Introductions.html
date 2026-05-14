@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Shen Cheng">
-<meta name="dcterms.date" content="2026-01-26">
+<meta name="dcterms.date" content="2026-05-14">
 
 <title>ECP8503 Course Introductions and Environment Setup</title>
 <style>
@@ -3042,7 +3042,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 26, 2026</p>
+      <p class="date">May 14, 2026</p>
     </div>
   </div>
   
@@ -3361,6 +3361,23 @@ vertical-align: -.125em;
 <li><code>#SBATCH --output=NONMEM.log</code> requests a NONMEM output log for trouble shooting purpose.</li>
 <li><code>module load nonmem/750-rocky8</code> loads the <code>NONMEM</code> program module at MSI HPC <code>agate</code>.</li>
 <li><code>execute mod1.ctl -nm_output=xml,ext</code> execute a model fitting through PsN, request <code>xml</code> and <code>ext</code> output.</li>
+</ul>
+</section>
+<section id="windows-user-only-dos2unix" class="level2">
+<h2 class="anchored" data-anchor-id="windows-user-only-dos2unix">Windows user ONLY: <code>dos2unix</code></h2>
+<ul>
+<li>Windows and Linux use different “end-of-line” characters in text files.</li>
+<li>When you create a SLURM <code>.sh</code> script on Windows and submit it to a Linux-based HPC (e.g. MSI), the file may contain hidden Windows carriage-return characters <code>\r</code>. Linux may then misread parts of the script.</li>
+<li>Therefore, Windows users need one additional step to reformat <code>.sh</code> script created/edited on Windows using <code>dos2unix</code> tool before job submission:
+<ul>
+<li>Open a terminal/powershell. Run <code>winget install waterlan.dos2unix</code> (First time ONLY)</li>
+<li>Close the terminal/powershell, open a new terminal/powershell:
+<ul>
+<li><code>cd your/ecp8503/local/repository</code></li>
+<li><code>dos2unix runmod.sh</code></li>
+</ul></li>
+</ul></li>
+<li>This is not an issue for macOS users.</li>
 </ul>
 </section>
 <section id="running-nonmem-through-finch-studio-on-msi" class="level2">

@@ -163,7 +163,6 @@ Assuming you have taken introductory level population PK course (e.g., ECP8502):
 
             -   In terminal, type `mv config.txt config`
             -   If you do `ssh agate.msi.umn.edu`, it should ask you for passphrase now instead of password!
-            
     -   Step 3 (SSH agent activation step) is optional, and may be a little different on Windows
         -   Open PowerShell on Windows:
         -   Run commands:
@@ -273,6 +272,17 @@ execute mod1.ctl -nm_output=xml,ext,phi
 -   `#SBATCH --output=NONMEM.log` requests a NONMEM output log for trouble shooting purpose.
 -   `module load nonmem/750-rocky8` loads the `NONMEM` program module at MSI HPC `agate`.
 -   `execute mod1.ctl -nm_output=xml,ext` execute a model fitting through PsN, request `xml` and `ext` output.
+
+## Windows user ONLY: `dos2unix`
+
+-   Windows and Linux use different “end-of-line” characters in text files.
+-   When you create a SLURM `.sh` script on Windows and submit it to a Linux-based HPC (e.g. MSI), the file may contain hidden Windows carriage-return characters `\r`. Linux may then misread parts of the script.
+-   Therefore, Windows users need one additional step to reformat `.sh` script created/edited on Windows using `dos2unix` tool before job submission: 
+    -   Open a terminal/powershell. Run `winget install waterlan.dos2unix` (First time ONLY)
+    -   Close the terminal/powershell, open a new terminal/powershell: 
+        -   `cd your/ecp8503/local/repository`
+        -   `dos2unix runmod.sh`
+-   This is not an issue for macOS users. 
 
 ## Running NONMEM through Finch Studio on MSI
 
